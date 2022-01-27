@@ -1,6 +1,5 @@
-#variable "myvariable" {
-#  type        = string
-#  description = "A description of my variable"
-#  default     = ""
-#}
-
+variable "prefix_name" {
+  type        = string
+  description = "Prefix to be added to the names of resources which are being provisioned"
+  default     = "swe"
+}

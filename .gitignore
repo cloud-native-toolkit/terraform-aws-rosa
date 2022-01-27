@@ -1,5 +1,11 @@
 .idea/
 *.iml
+.terraform.lock.hcl
 terraform.tfstate
 terraform.tfstate.backup
-.terraform/
+.terraform
+test/stages/module
+.DS_Store
+terraform.tfvars
+aws.code-workspace
+.vscode

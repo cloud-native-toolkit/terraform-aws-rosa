@@ -1,50 +1,104 @@
-
-# Resource Group Variables
-variable "resource_group_name" {
-  type        = string
-  description = "Existing resource group where the IKS cluster will be provisioned."
-}
-
-variable "ibmcloud_api_key" {
-  type        = string
-  description = "The api key for IBM Cloud access"
-}
-
 variable "region" {
   type        = string
-  description = "Region for VLANs defined in private_vlan_number and public_vlan_number."
+  default     = "ap-south-1"
+  description = "Please set the region where the resouces to be created "
 }
 
-variable "namespace" {
+variable "access_key" {
+  type = string
+}
+variable "secret_key" {
+  type = string
+}
+
+variable "prefix_name" {
   type        = string
-  description = "Namespace for tools"
+  description = "Prefix to be added to the names of resources which are being provisioned"
+  default     = "swe"
 }
-
-variable "cluster_name" {
+variable "instance_tenancy" {
   type        = string
-  description = "The name of the cluster"
-  default     = ""
+  description = "Instance is shared / dedicated, etc. #[default, dedicated, host]"
+  default     = "default"
 }
 
-variable "cluster_type" {
+variable "internal_cidr" {
   type        = string
-  description = "The type of cluster that should be created (openshift or kubernetes)"
+  description = "The cidr range of the internal network.Either provide manually or chose from AWS IPAM poolsß"
+  default     = "10.0.0.0/16"
 }
 
-variable "cluster_exists" {
-  type        = string
-  description = "Flag indicating if the cluster already exists (true or false)"
-  default     = "true"
-}
-
-variable "name_prefix" {
-  type        = string
-  description = "Prefix name that should be used for the cluster and services. If not provided then resource_group_name will be used"
-  default     = ""
-}
-
-variable "vpc_cluster" {
+variable "provision" {
   type        = bool
-  description = "Flag indicating that this is a vpc cluster"
-  default     = false
+  description = "Flag indicating that the instance should be provisioned. If false then an existing instance will be looked up"
+  default     = true
+}
+variable "vpc_id" {
+  type        = string
+  description = "The id of the existing VPC instance"
+  default     = ""
+}
+
+variable "private_subnet_cidr" {
+  type        = list(string)
+  description = "(Required) The CIDR block for the private subnet."
+  default     = ["10.0.125.0/24"]
+}
+
+variable "public_subnet_cidr" {
+  type        = list(string)
+  description = "(Required) The CIDR block for the public subnet."
+  default     = ["10.0.0.0/20"]
+}
+
+
+variable "tags" {
+  type = map(string)
+  default = {
+    project = "swe"
+  }
+  description = "(Optional) A map of tags to assign to the resource. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level."
+}
+
+variable "public_subnet_tags" {
+  description = "Tags for public subnets"
+  type        = map(string)
+  default = {
+    tier = "public"
+  }
+}
+
+variable "private_subnet_tags" {
+  description = "Tags for private subnets"
+  type        = map(string)
+  default = {
+    tier = "private"
+  }
+}
+
+variable "availability_zones" {
+  description = "List of availability zone ids"
+  type        = list(string)
+  default     = [""]
+}
+
+variable "acl_rules_pub_in" {
+  type        = list(map(string))
+  default = []
+}
+
+variable "acl_rules_pub_out" {
+  type        = list(map(string))
+  default = []
+}
+
+variable "acl_rules_pri_in" {
+  description = "Private subnets inbound network ACLs"
+  type        = list(map(string))
+  default = []
+}
+
+variable "acl_rules_pri_out" {
+  type        = list(map(string))
+  default = []
 }
