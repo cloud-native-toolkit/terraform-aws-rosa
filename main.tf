@@ -47,7 +47,7 @@ resource "null_resource" "create-rosa-cluster" {
     ${self.triggers.bin_dir}/rosa init
     ${self.triggers.bin_dir}/rosa create cluster ${self.triggers.create_clsuter_cmd}
     EOF
-    interpreter = ["bash", "-c"]
+    interpreter = ["/bin/sh", "-c"]
   }
 }
 
