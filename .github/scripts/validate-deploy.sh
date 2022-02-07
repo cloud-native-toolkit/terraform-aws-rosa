@@ -13,7 +13,10 @@ aws configure set region ${REGION}
 aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
 aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
 
-echo "Checking for ROSA cluster :  ${VPC_ID}"
-CLUSTER_DETAILS=$(rosa list clusters )
+# echo "Login to ROSA cli "
+# rosa login --token=${AWS_ROSA_TOKEN}
+
+# echo "Checking for ROSA cluster :  ${CLUSTER_NAME}"
+# CLUSTER_DETAILS=$(rosa list clusters )
 
 exit 0
