@@ -41,12 +41,13 @@ resource "null_resource" "create-rosa-cluster" {
   ]
   provisioner "local-exec" {
 
-    command = <<EOF
-    "${self.triggers.bin_dir}/rosa login --token=${var.rosa_token}"
-    "${self.triggers.bin_dir}/rosa verify quota --region=${var.region}"
-    "${self.triggers.bin_dir}/rosa init"
-    "${self.triggers.bin_dir}/rosa create cluster ${self.triggers.create_clsuter_cmd}"
-  EOF  
+    command=<<-EOF
+    ${self.triggers.bin_dir}/rosa login --token=${var.rosa_token}
+    ${self.triggers.bin_dir}/rosa verify quota --region=${var.region}
+    ${self.triggers.bin_dir}/rosa init
+    ${self.triggers.bin_dir}/rosa create cluster ${self.triggers.create_clsuter_cmd}
+    EOF
+    interpreter = ["bash", "-c"]
   }
 }
 
