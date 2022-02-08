@@ -4,7 +4,7 @@ locals {
   #//for local testing 
   #bin_dir       = "/usr/local/bin"
   bin_dir        = module.setup_clis.bin_dir
-  cred_dir       = "${path.cwd}/rosa_user_creds1"
+  cred_dir       = "${path.cwd}/rosa_user_creds"
   cred_file_name = "rosa_admin_creds"
 
   join_subnets = var.existing_vpc ? join(",", [var.public_subnet_ids[0], var.private_subnet_ids[0]]) : ""
@@ -27,28 +27,8 @@ locals {
 module "setup_clis" {
   source = "github.com/cloud-native-toolkit/terraform-util-clis.git"
   clis   = ["yq", "jq", "igc", "rosa"]
+  # clis   = ["helm", "rosa"]
 
-}
-
-resource "null_resource" "create-rosa-cluster" {
-  triggers = {
-    bin_dir            = local.bin_dir
-    cred_dir           = local.cred_dir
-    create_clsuter_cmd = local.create_clsuter_cmd
-  }
-  depends_on = [
-    module.setup_clis
-  ]
-  provisioner "local-exec" {
-
-    command=<<-EOF
-    ${self.triggers.bin_dir}/rosa login --token=${var.rosa_token}
-    ${self.triggers.bin_dir}/rosa verify quota --region=${var.region}
-    ${self.triggers.bin_dir}/rosa init
-    ${self.triggers.bin_dir}/rosa create cluster ${self.triggers.create_clsuter_cmd}
-    EOF
-    interpreter = ["/bin/sh", "-c"]
-  }
 }
 
 resource "null_resource" "create_dirs" {
@@ -61,18 +41,55 @@ resource "null_resource" "create_dirs" {
   }
 }
 
+resource "null_resource" "create-rosa-cluster" {
+  triggers = {
+    bin_dir            = local.bin_dir
+    cred_dir           = local.cred_dir
+    create_clsuter_cmd = local.create_clsuter_cmd
+    cluster_name       = var.cluster_name
+  }
+  depends_on = [
+    module.setup_clis
+  ]
+  provisioner "local-exec" {
+    when    = create
+    command = <<-EOF
+    ${self.triggers.bin_dir}/rosa login --token=${var.rosa_token}
+
+    ${self.triggers.bin_dir}/rosa verify quota --region=${var.region}
+    ${self.triggers.bin_dir}/rosa init
+    ${self.triggers.bin_dir}/rosa create cluster ${self.triggers.create_clsuter_cmd}
+    EOF
+    #interpreter = ["/bin/sh", "-c"]
+  }
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<-EOF
+    ${self.triggers.bin_dir}/rosa delete cluster --cluster='${self.triggers.cluster_name}' --yes 
+    echo 'Sleeping for 2m'
+    sleep 120
+  EOF
+  }
+}
+
 resource "null_resource" "create_rosa_user" {
   depends_on = [
     null_resource.create-rosa-cluster,
     null_resource.create_dirs
   ]
   triggers = {
-    bin_dir   = local.bin_dir
-    cred_dir  = local.cred_dir
-    file_name = local.cred_file_name
+    bin_dir      = local.bin_dir
+    cred_dir     = local.cred_dir
+    file_name    = local.cred_file_name
+    cluster_name = var.cluster_name
   }
   provisioner "local-exec" {
-    command = "${self.triggers.bin_dir}/rosa create admin --cluster=${var.cluster_name} > ${self.triggers.cred_dir}/${self.triggers.file_name}"
+    command = <<-EOF
+      echo "Sleeping for 2m"
+      sleep 500
+      #"${self.triggers.bin_dir}/rosa create admin --cluster=${self.triggers.cluster_name} > ${self.triggers.cred_dir}/${self.triggers.file_name}"
+      echo "Sleeping for 2m"  > ${self.triggers.cred_dir}/${self.triggers.file_name}
+    EOF  
   }
 }
 
@@ -83,4 +100,3 @@ data "local_file" "read_creds" {
   ]
   filename = "${local.cred_dir}/${local.cred_file_name}"
 }
-
