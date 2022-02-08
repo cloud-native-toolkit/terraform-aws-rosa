@@ -21,10 +21,6 @@ versions:
     variables:
     - name: region
       scope: global
-    - name: access_key
-      scope: global
-    - name: secret_key
-      scope: global
     - name: rosa_token
       scope: global
     # - name: no_of_compute_nodes
@@ -43,23 +39,23 @@ versions:
       scope: global
     - name: dry_run 
       scope: global
-    - name: provision
-      moduleRef:
-        id: aws-vpc
-    - name: vpc_id
-      moduleRef:
-        id: aws-vpc
-        output: vpc_id
-    - name: internal_cidr
-      moduleRef:
-        id: aws-vpc
-    - name: private_subnet_cidr
-      moduleRef:
-        id: aws-vpc-subnets
-    - name: public_subnet_cidr
-      moduleRef:
-        id: aws-vpc-subnets
-    - name: availability_zones
-      moduleRef:
-        id: aws-vpc-subnets
+    # - name: provision
+    #   moduleRef:
+    #     id: aws-vpc
+    # - name: vpc_id
+    #   moduleRef:
+    #     id: aws-vpc
+    #     output: vpc_id
+    # - name: internal_cidr
+    #   moduleRef:
+    #     id: aws-vpc
+    # - name: private_subnet_cidr
+    #   moduleRef:
+    #     id: aws-vpc-subnets
+    # - name: public_subnet_cidr
+    #   moduleRef:
+    #     id: aws-vpc-subnets
+    # - name: availability_zones
+    #   moduleRef:
+    #     id: aws-vpc-subnets
 cloudProvider: aws

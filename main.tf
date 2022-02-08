@@ -85,10 +85,9 @@ resource "null_resource" "create_rosa_user" {
   }
   provisioner "local-exec" {
     command = <<-EOF
-      echo "Sleeping for 2m"
-      sleep 500
-      #"${self.triggers.bin_dir}/rosa create admin --cluster=${self.triggers.cluster_name} > ${self.triggers.cred_dir}/${self.triggers.file_name}"
-      echo "Sleeping for 2m"  > ${self.triggers.cred_dir}/${self.triggers.file_name}
+      echo "Sleeping for 20m"
+      sleep 1500
+      "${self.triggers.bin_dir}/rosa create admin --cluster=${self.triggers.cluster_name} > ${self.triggers.cred_dir}/${self.triggers.file_name}"
     EOF  
   }
 }
