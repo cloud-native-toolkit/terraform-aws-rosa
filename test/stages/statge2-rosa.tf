@@ -16,12 +16,5 @@ module "dev_aws_rosa" {
   dry_run             = var.dry_run
 }
 
-# resource "null_resource" "write_path" {
-#   depends_on = [
-#     "module.dev_aws_rosa"
-#   ]
-#   provisioner "local-exec" {
-#     #command = "echo -n '${module.clis.bin_dir}' > .bin_dir"
-#     command = "echo ${module.dev_aws_rosa} > .bin_dir"
-#   }
-# }
+
+
