@@ -1,6 +1,6 @@
-output "cluster_admin_creds" {
-  value = ""
-}
+# output "cluster_admin_creds" {
+#   value = ""
+# }
 
 output "ocp_api_server_url" {
   value = module.dev_aws_rosa.ocp_api_server_url
