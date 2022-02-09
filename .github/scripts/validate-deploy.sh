@@ -15,9 +15,9 @@ echo "REGION: ${REGION}"
 # aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
 
 echo "Login to ROSA cli "
-rosa login --token=${AWS_ROSA_TOKEN}
+${BIN_DIR}/rosa login --token=${AWS_ROSA_TOKEN}
 echo "Checking for ROSA cluster :  ${CLUSTER_NAME}"
-CLUSTER_DETAILS=$(rosa list clusters | grep -c "${CLUSTER_NAME}")
+CLUSTER_DETAILS=$(${BIN_DIR}/rosa list clusters | grep -c "${CLUSTER_NAME}")
 echo $CLUSTER_DETAILS
 if [[(${CLUSTER_DETAILS} == 1) ]]; then
     echo "Cluster  found"
