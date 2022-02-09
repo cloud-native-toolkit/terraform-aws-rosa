@@ -6,8 +6,9 @@ terraform.tfstate.backup
 .terraform
 test/stages/module
 test/stages/bin2
+test/stages/.bin_dir
 .DS_Store
 terraform.tfvars
 aws.code-workspace
 .vscode
-
+.bin_dir
