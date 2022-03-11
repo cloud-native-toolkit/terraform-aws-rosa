@@ -4,6 +4,11 @@ variable "region" {
   description = "Please set the region where the resouces to be created "
 }
 
+variable "cloud_provider" {
+  type = string
+  default = "aws"
+}
+
 variable "access_key" {
   type = string
 }
@@ -16,12 +21,25 @@ variable "rosa_token" {
   description = ""
 }
 
+variable "resource_group_name" {
+  type        = string
+  description = "Existing resource group where the IKS cluster will be provisioned."
+  default     = "default"
+}
 
-variable "prefix_name" {
+variable "name_prefix" {
   type        = string
   description = "Prefix to be added to the names of resources which are being provisioned"
   default     = "swe"
 }
+
+
+
+# variable "prefix_name" {
+#   type        = string
+#   description = "Prefix to be added to the names of resources which are being provisioned"
+#   default     = "swe"
+# }
 
 variable "provision" {
   type        = bool
@@ -80,31 +98,27 @@ variable "etcd-encryption" {
   default     = ""
   description = "Add etcd encryption. By default etcd data is encrypted at rest. This option configures etcd encryption on top of existing storage encryption."
 }
-variable "subnet_ids" {
-  type        = list(string)
-  description = "To create cluster in existing VPC, public and private Subnet ids should be given ."
-  default     = [""]
-}
-/*     
+
 variable "multi-zone-cluster" {
-  type = string
-  default = ""
+  type = bool
+  default = false
   description = " Deploy to multiple data centers"
 }
 
-
-variable "private-link" {
-  type = string
-  default = ""
-  description = "Provides private connectivity between VPCs, AWS services, and your on-premises networks, without exposing your traffic to the public internet"
+variable "gateways_count" {
+  type = number
+  default = 1
+  description = "Number of NAT gateways"
 }
 
-variable "subnet-ids" {
-  type = []
-  default = ""
-  description = "The Subnet IDs to use when installing the cluster. Format should be a comma-separated list. Leave empty for installer provisioned subnet IDs"
-}
-*/
+
+# variable "private-link" {
+#   type = bool
+#   default = ""
+#   description = "Provides private connectivity between VPCs, AWS services, and your on-premises networks, without exposing your traffic to the public internet"
+# }
+
+
 variable "existing_vpc" {
   type        = bool
   default     = true
@@ -127,4 +141,50 @@ variable "dry_run" {
   type        = bool
   description = "Set to true to dry the command just to verify. Else set to false to actually run the cmd"
   default     = true
+}
+
+
+
+variable "pub_subnet_cidrs" {
+  type        = list(string)
+  description = "The cidr range of the Public subnet."
+  #default=["10.0.0.0/20"]
+}
+variable "priv_subnet_cidrs" {
+  type        = list(string)
+  description = "The cidr range of the Private subnet."
+  #default=["10.0.128.0/20"]
+}
+
+variable "availability_zones" {
+  description = "List of availability zone ids"
+  type        = list(string)
+  default     = []
+}
+variable "acl_rules_pub" {
+  type        = list(map(string))
+  default = []
+}
+variable "acl_rules_pri" {
+  description = "Private subnets inbound network ACLs"
+  type        = list(map(string))
+  default = []
+}
+
+variable "connectivity_type" {
+  type        = string
+  description = "(Optional) Connectivity type for the gateway. Valid values are private and public. Defaults to public."
+  default     = "public"    
+}
+
+
+variable "instance_tenancy" {
+  type        = string
+  description = "Instance is shared / dedicated, etc. #[default, dedicated, host]"
+  default     = "default"
+}
+variable "internal_cidr" {
+  type        = string
+  description = "The cidr range of the internal network.Either provide manually or chose from AWS IPAM poolsß"
+  default     = "10.0.0.0/16"
 }
