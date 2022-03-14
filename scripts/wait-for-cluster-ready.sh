@@ -13,7 +13,7 @@ count=0
 while true ; do
   cluster_status=$(${BIN_DIR}/rosa describe cluster --cluster ${CLUSTER_NAME} -o json | ${BIN_DIR}/jq -r ."status.state")
   echo "cluster_status : ${cluster_status}"
-  if [[ ${count} -eq 80 ]]; then
+  if [[ ${count} -eq 100 ]]; then
     echo "Timed out waiting for cluster ${CLUSTER_NAME} status to be ready"
     exit 1
   else 
