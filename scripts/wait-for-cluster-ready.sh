@@ -12,6 +12,7 @@ count=0
 
 while true ; do
   cluster_status=$(${BIN_DIR}/rosa describe cluster --cluster ${CLUSTER_NAME} -o json | ${BIN_DIR}/jq -r ."status.state")
+  
   echo "cluster_status : ${cluster_status}"
   if [[ ${count} -eq 110 ]]; then
     echo "Timed out waiting for cluster ${CLUSTER_NAME} status to be ready"
@@ -20,12 +21,10 @@ while true ; do
      
     if [[ ${cluster_status} ==  "ready" ]]; then
       break;
-    else 
-      count=$((count + 1)) 
     fi
   fi
-
+  count=$((count + 1)) 
   echo "Waiting for cluster status to be ready ${CLUSTER_NAME} to be ready"
-  cluster_status='$(${BIN_DIR}/rosa describe cluster --cluster swe-cluster -o json | ${BIN_DIR}/jq -r ."status.state")'
+  #cluster_status='$(${BIN_DIR}/rosa describe cluster --cluster swe-cluster -o json | ${BIN_DIR}/jq -r ."status.state")'
   sleep 30
 done
