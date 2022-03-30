@@ -15,30 +15,28 @@ versions:
       refs:
       - source: github.com/cloud-native-toolkit/terraform-aws-vpc
         version: ">= 1.0.0"
-    - id: aws-vpc-subnets
-      alias: pub-subnets
+    - id: public-subnets
+      refs:
+      - source: github.com/cloud-native-toolkit/terraform-aws-vpc-subnets
+        version: ">= 1.0.0"      
+    - id: private-subnets
       refs:
       - source: github.com/cloud-native-toolkit/terraform-aws-vpc-subnets
         version: ">= 1.0.0"
-    # - id: aws-vpc-subnets
-    #   alias: pri-subnets
-    #   refs:
-    #   - source: github.com/cloud-native-toolkit/terraform-aws-vpc-subnets
-    #     version: ">= 1.0.0"
-    # variables:
-    # - name: rosa_token
-    #   scope: module
-    #   important: true
-    # - name: no_of_compute_nodes
-    #   scope: module
-    #   important: true            
-    # - name: public_subnet_ids
-    #   moduleRef:
-    #     id: aws-vpc-subnets
-    #     output: subnet_ids
-    # - name: private_subnet_ids 
-    #   moduleRef:
-    #     id: aws-vpc-subnets
-    #     output: subnet_ids
+    variables:
+    - name: rosa_token
+      scope: module
+      important: true
+    - name: no_of_compute_nodes
+      scope: module
+      important: true            
+    - name: public_subnet_ids
+      moduleRef:
+        id: public-subnets
+        output: subnet_ids
+    - name: private_subnet_ids 
+      moduleRef:
+        id: private-subnets
+        output: subnet_ids
       
 

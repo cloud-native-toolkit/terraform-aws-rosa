@@ -1,7 +1,6 @@
 module "dev_aws_rosa" {
   source = "./module"
   region = var.region
-  #provision           = true
   name_prefix         = var.name_prefix
   rosa_token          = var.rosa_token
   cluster_name        = var.cluster_name

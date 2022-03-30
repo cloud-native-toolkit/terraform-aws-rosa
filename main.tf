@@ -48,6 +48,7 @@ resource "null_resource" "create-rosa-cluster" {
     create_clsuter_cmd = local.create_clsuter_cmd
     cluster_name       = local.cluster_name
     rosa_token        = var.rosa_token
+    region          = var.region
   }
   depends_on = [
     module.setup_clis,
@@ -73,7 +74,7 @@ resource "null_resource" "create-rosa-cluster" {
     command = <<-EOF
     ${self.triggers.bin_dir}/rosa login --token=${var.rosa_token}
     ${self.triggers.bin_dir}/rosa verify quota --region=${var.region}
-    ${self.triggers.bin_dir}/rosa init
+    ${self.triggers.bin_dir}/rosa init --region=${var.region}
     ${self.triggers.bin_dir}/rosa create cluster ${self.triggers.create_clsuter_cmd}
     EOF
   }
@@ -82,6 +83,7 @@ resource "null_resource" "create-rosa-cluster" {
     when    = destroy
     command = <<-EOF
     ${self.triggers.bin_dir}/rosa login --token=${self.triggers.rosa_token}
+    ${self.triggers.bin_dir}/rosa init --region=${var.region}
     ${self.triggers.bin_dir}/rosa delete cluster --cluster='${self.triggers.cluster_name}' --yes 
     echo 'Sleeping for 2m'
     sleep 120
@@ -102,11 +104,12 @@ resource null_resource wait-for-cluster-ready {
   }
   provisioner "local-exec" {
     when = create  
-    command = "${path.module}/scripts/wait-for-cluster-ready.sh ${local.cluster_name}"
+    command = "${path.module}/scripts/wait-for-cluster-ready.sh ${local.cluster_name} ${var.region}"
 
     environment = {
       BIN_DIR=module.setup_clis.bin_dir
       ROSA_TOKEN=nonsensitive(var.rosa_token)
+      
     }
   }
 }
@@ -166,6 +169,9 @@ resource "null_resource" "create_rosa_user" {
       ${self.triggers.bin_dir}/rosa create admin --cluster=${self.triggers.cluster_name} > ${self.triggers.cred_dir}/${self.triggers.cred_file_name}
       echo "Sleeping for 2m"
       sleep 120
+      echo "Creds Display :"
+      cat ${self.triggers.cred_dir}/${self.triggers.cred_file_name}
+      echo "Creds  done"
     EOF  
   }
 }
@@ -179,11 +185,13 @@ data "local_file" "read_creds" {
 }
 
 locals {
-  ocp_api_server_url = data.local_file.read_creds.content != null ? regex("https://[a-zA-z0-9-.:]+", data.local_file.read_creds.content):""
+  ocp_login_details = data.local_file.read_creds.content
 
-  ocp_cluster_admin_user = data.local_file.read_creds.content != null ? trimprefix(regex("--username\\s*\\S*", data.local_file.read_creds.content), "--username ") :""
+  #ocp_api_server_url = data.local_file.read_creds.content != null ? regex("https://[a-zA-z0-9-.:]+", data.local_file.read_creds.content):""
 
-  ocp_cluster_admin_pwd = data.local_file.read_creds.content != "" ? trimprefix(regex("--password\\s*\\S*", data.local_file.read_creds.content), "--password ") :""
+  # ocp_cluster_admin_user = data.local_file.read_creds.content != null ? trimprefix(regex("--username\\s*\\S*", data.local_file.read_creds.content), "--username ") :""
+
+  # ocp_cluster_admin_pwd = data.local_file.read_creds.content != "" ? trimprefix(regex("--password\\s*\\S*", data.local_file.read_creds.content), "--password ") :""
 
 }
   
