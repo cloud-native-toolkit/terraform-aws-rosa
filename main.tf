@@ -73,8 +73,8 @@ resource "null_resource" "create-rosa-cluster" {
     when    = create
     command = <<-EOF
     ${self.triggers.bin_dir}/rosa login --token=${var.rosa_token}
-    ${self.triggers.bin_dir}/rosa verify quota --region=${var.region}
-    ${self.triggers.bin_dir}/rosa init --region=${var.region}
+    ${self.triggers.bin_dir}/rosa verify quota --region=${self.triggers.region}
+    ${self.triggers.bin_dir}/rosa init --region=${self.triggers.region}
     ${self.triggers.bin_dir}/rosa create cluster ${self.triggers.create_clsuter_cmd}
     EOF
   }
@@ -83,7 +83,7 @@ resource "null_resource" "create-rosa-cluster" {
     when    = destroy
     command = <<-EOF
     ${self.triggers.bin_dir}/rosa login --token=${self.triggers.rosa_token}
-    ${self.triggers.bin_dir}/rosa init --region=${var.region}
+    ${self.triggers.bin_dir}/rosa init --region=${self.triggers.region}
     ${self.triggers.bin_dir}/rosa delete cluster --cluster='${self.triggers.cluster_name}' --yes 
     echo 'Sleeping for 2m'
     sleep 120
