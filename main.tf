@@ -106,13 +106,13 @@ resource null_resource wait-for-cluster-ready {
 
     environment = {
       BIN_DIR=module.setup_clis.bin_dir
-      ROSA_TOKEN=var.rosa_token
+      ROSA_TOKEN=nonsensitive(var.rosa_token)
     }
   }
 }
 
 
-#Local exeution - working.
+# exeution - working.
 # resource null_resource wait-for-cluster-ready {
 #   depends_on = [null_resource.create-rosa-cluster]
 #     triggers = {

@@ -8,14 +8,15 @@ BIN_DIR=$(cat .bin_dir)
 cat .bin_dir
 
 count=0
-${BIN_DIR}/rosa  login --token=${ROSA_TOKEN}
+${BIN_DIR}/rosa  login 
 ${BIN_DIR}/rosa  init
 while true ; do
   cluster_status=$(${BIN_DIR}/rosa describe cluster --cluster ${CLUSTER_NAME} -o json | ${BIN_DIR}/jq -r ."status.state")
   
   echo "cluster_status : ${cluster_status}"
-  if [[ ${count} -eq 110 ]]; then
+  if [[ ${count} -gt 20 ]]; then
     echo "Timed out waiting for cluster ${CLUSTER_NAME} status to be ready"
+    break;
   else 
      
     if [[ ${cluster_status} ==  "ready" ]]; then
@@ -25,5 +26,5 @@ while true ; do
   count=$((count + 1)) 
   echo "Waiting for cluster - ${CLUSTER_NAME} status to be ready  to be ready"
   #cluster_status='$(${BIN_DIR}/rosa describe cluster --cluster swe-cluster -o json | ${BIN_DIR}/jq -r ."status.state")'
-  sleep 30
+  sleep 300
 done
