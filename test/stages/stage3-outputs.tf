@@ -45,3 +45,9 @@ output "private_subnet_ids" {
   ]
   value = module.dev_priv_subnet.subnet_ids
 }
+
+//Deelete later
+# output "ocp_cluster_status" {
+#   value = module.dev_aws_rosa.cluster_status
+
+# }

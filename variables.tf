@@ -13,6 +13,7 @@ variable "region" {
 variable "rosa_token" {
   type        = string
   default     = ""
+  sensitive = true
   description = "get an offline access token at https://cloud.redhat.com/openshift/token/rosa "
 }
 

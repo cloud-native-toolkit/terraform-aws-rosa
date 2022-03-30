@@ -2,7 +2,7 @@ module "dev_aws_rosa" {
   source = "./module"
   region = var.region
   #provision           = true
-  #prefix_name         = "swe-rosa"
+  name_prefix         = var.name_prefix
   rosa_token          = var.rosa_token
   cluster_name        = var.cluster_name
   ocp_version         = var.ocp_version
@@ -12,10 +12,11 @@ module "dev_aws_rosa" {
   pod-cidr            = var.pod-cidr
   host-prefix         = var.host-prefix
 
-  public_subnet_ids   =  module.dev_pub_subnet.subnet_ids
-  private_subnet_ids  = module.dev_priv_subnet.subnet_ids
-  dry_run             = var.dry_run
-  multi-zone-cluster=var.multi-zone-cluster
+  public_subnet_ids  = module.dev_pub_subnet.subnet_ids
+  private_subnet_ids = module.dev_priv_subnet.subnet_ids
+  dry_run            = var.dry_run
+  multi-zone-cluster = var.multi-zone-cluster
+  private-link       = var.private-link
 }
 
 

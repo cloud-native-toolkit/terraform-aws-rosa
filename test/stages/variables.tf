@@ -5,7 +5,7 @@ variable "region" {
 }
 
 variable "cloud_provider" {
-  type = string
+  type    = string
   default = "aws"
 }
 
@@ -100,24 +100,23 @@ variable "etcd-encryption" {
 }
 
 variable "multi-zone-cluster" {
-  type = bool
-  default = false
+  type        = bool
+  default     = false
   description = " Deploy to multiple data centers"
 }
 
 variable "gateways_count" {
-  type = number
-  default = 1
+  type        = number
+  default     = 1
   description = "Number of NAT gateways"
 }
 
 
-# variable "private-link" {
-#   type = bool
-#   default = ""
-#   description = "Provides private connectivity between VPCs, AWS services, and your on-premises networks, without exposing your traffic to the public internet"
-# }
-
+variable "private-link" {
+  type        = bool
+  default     = false
+  description = "Provides private connectivity between VPCs, AWS services, and your on-premises networks, without exposing your traffic to the public internet"
+}
 
 variable "existing_vpc" {
   type        = bool
@@ -162,19 +161,19 @@ variable "availability_zones" {
   default     = []
 }
 variable "acl_rules_pub" {
-  type        = list(map(string))
+  type    = list(map(string))
   default = []
 }
 variable "acl_rules_pri" {
   description = "Private subnets inbound network ACLs"
   type        = list(map(string))
-  default = []
+  default     = []
 }
 
 variable "connectivity_type" {
   type        = string
   description = "(Optional) Connectivity type for the gateway. Valid values are private and public. Defaults to public."
-  default     = "public"    
+  default     = "public"
 }
 
 
