@@ -26,6 +26,6 @@ while true ; do
     fi
   fi
   count=$((count + 1)) 
-  echo "Waiting for cluster - ${CLUSTER_NAME} status to be ready  to be ready"
+  echo "Waiting for cluster - ${CLUSTER_NAME} status to be ready "
   sleep 300
 done

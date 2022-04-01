@@ -1,7 +1,5 @@
 locals {
   cluster_name = var.cluster_name != "" && var.cluster_name != null ? var.cluster_name : "${var.name_prefix}-cluster"
-  #//for local testing 
-  #bin_dir       = "/usr/local/bin"
   bin_dir        = module.setup_clis.bin_dir
   cred_dir       = "${path.cwd}/rosa_user_creds"
   cred_file_name = "rosa_admin_cred"
@@ -29,12 +27,14 @@ resource "null_resource" "create_dirs" {
     cred_dir = local.cred_dir
   }
   provisioner "local-exec" {
+    when    = create
     command = "mkdir -p ${self.triggers.cred_dir}"
   }
 }
 
 resource null_resource print_names {
   provisioner "local-exec" {
+    when    = create
     command = <<-EOF
       echo Cluster command : ${local.create_clsuter_cmd}
     EOF
@@ -55,19 +55,6 @@ resource "null_resource" "create-rosa-cluster" {
     null_resource.print_names
   ]
 
-  # provisioner "local-exec" {
-  #     when = create  
-  #     command = <<-EOF
-  #     ${path.module}/scripts/create-cluster.sh ${self.triggers.create_clsuter_cmd}
-  #     environment = {
-  #       BIN_DIR=module.setup_clis.bin_dir
-  #       ROSA_TOKEN=var.rosa_token
-  #       CLUSTER_NAME=local.cluster_name
-  #       REGION=var.region
-  #       CLUSTER_CMD=local.create_clsuter_cmd
-  #     }
-  #    EOF 
-  # }
 
   provisioner "local-exec" {
     when    = create
@@ -82,15 +69,13 @@ resource "null_resource" "create-rosa-cluster" {
  provisioner "local-exec" {
     when    = destroy
     command = <<-EOF
-    ${self.triggers.bin_dir}/rosa login --token=${self.triggers.rosa_token}
-    ${self.triggers.bin_dir}/rosa init --region=${self.triggers.region}
-    ${self.triggers.bin_dir}/rosa delete cluster --cluster='${self.triggers.cluster_name}' --yes 
-    echo 'Sleeping for 2m'
-    sleep 120
-  EOF
+      
+      ${path.module}/scripts/delete_cluster.sh ${self.triggers.cluster_name}  ${self.triggers.region} ${self.triggers.rosa_token}
+      
+    EOF
+    
   } 
 }
-
 
 # bash script version
 resource null_resource wait-for-cluster-ready {
@@ -149,49 +134,52 @@ resource null_resource wait-for-cluster-ready {
 # }
  
 
-resource "null_resource" "create_rosa_user" {
-  depends_on = [
-    null_resource.create-rosa-cluster,
-    null_resource.create_dirs,
-    null_resource.wait-for-cluster-ready,
+# resource "null_resource" "create_rosa_user" {
+#   depends_on = [
+#     null_resource.create-rosa-cluster,
+#     null_resource.create_dirs,
+#     null_resource.wait-for-cluster-ready,
     
-  ]
-  triggers = {
-    bin_dir      = local.bin_dir
-    cred_dir     = local.cred_dir
-    cred_file_name    = local.cred_file_name
-    cluster_name = local.cluster_name
-  }
-  provisioner "local-exec" {
-    command = <<-EOF
-      #echo "Sleeping for 15m"
-      #sleep 900
-      ${self.triggers.bin_dir}/rosa create admin --cluster=${self.triggers.cluster_name} > ${self.triggers.cred_dir}/${self.triggers.cred_file_name}
-      echo "Sleeping for 2m"
-      sleep 120
-      echo "Creds Display :"
-      cat ${self.triggers.cred_dir}/${self.triggers.cred_file_name}
-      echo "Creds  done"
-    EOF  
-  }
-}
+#   ]
+#   triggers = {
+#     bin_dir      = local.bin_dir
+#     cred_dir     = local.cred_dir
+#     cred_file_name    = local.cred_file_name
+#     cluster_name = local.cluster_name
+#     rosa_token        = var.rosa_token
+#   }
+#   provisioner "local-exec" {
+#     command = <<-EOF
+#       #echo "Sleeping for 15m"
+#       #sleep 900
+#       ${self.triggers.bin_dir}/rosa login --token=${self.triggers.rosa_token}
+#       ${self.triggers.bin_dir}/rosa init --region=${self.triggers.region}
+#       ${self.triggers.bin_dir}/rosa create admin --cluster=${self.triggers.cluster_name} > ${self.triggers.cred_dir}/${self.triggers.cred_file_name}
+#       echo "Sleeping for 2m"
+#       sleep 120
+#       echo "Creds Display :"
+#       cat ${self.triggers.cred_dir}/${self.triggers.cred_file_name}
+#       echo "Creds  done"
+#     EOF  
+#   }
+# }
 
-data "local_file" "read_creds" {
-  depends_on = [
-    null_resource.create_rosa_user,
-    null_resource.create_dirs
-  ]
-  filename = "${local.cred_dir}/${local.cred_file_name}"
-}
+# data "local_file" "read_creds" {
+#   depends_on = [
+#     null_resource.create_rosa_user,
+#     null_resource.create_dirs
+#   ]
+#   filename = "${local.cred_dir}/${local.cred_file_name}"
+# }
 
-locals {
-  ocp_login_details = data.local_file.read_creds.content
+# locals {
+#   ocp_login_details = data.local_file.read_creds.content
 
-  #ocp_api_server_url = data.local_file.read_creds.content != null ? regex("https://[a-zA-z0-9-.:]+", data.local_file.read_creds.content):""
+#   #ocp_api_server_url = data.local_file.read_creds.content != null ? regex("https://[a-zA-z0-9-.:]+", data.local_file.read_creds.content):""
 
-  # ocp_cluster_admin_user = data.local_file.read_creds.content != null ? trimprefix(regex("--username\\s*\\S*", data.local_file.read_creds.content), "--username ") :""
+#   # ocp_cluster_admin_user = data.local_file.read_creds.content != null ? trimprefix(regex("--username\\s*\\S*", data.local_file.read_creds.content), "--username ") :""
 
-  # ocp_cluster_admin_pwd = data.local_file.read_creds.content != "" ? trimprefix(regex("--password\\s*\\S*", data.local_file.read_creds.content), "--password ") :""
+#   # ocp_cluster_admin_pwd = data.local_file.read_creds.content != "" ? trimprefix(regex("--password\\s*\\S*", data.local_file.read_creds.content), "--password ") :""
 
-}
+# }
   
