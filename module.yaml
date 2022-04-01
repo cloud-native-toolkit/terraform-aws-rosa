@@ -2,6 +2,7 @@ name: aws-rosa
 alias: rosa-cluster
 type: terraform
 description: Module to provision rosa on aws rosa cluster
+cloudProvider: aws
 tags:
     - ocp
     - cluster
@@ -14,48 +15,28 @@ versions:
       refs:
       - source: github.com/cloud-native-toolkit/terraform-aws-vpc
         version: ">= 1.0.0"
-    - id: aws-vpc-subnets
+    - id: public-subnets
+      refs:
+      - source: github.com/cloud-native-toolkit/terraform-aws-vpc-subnets
+        version: ">= 1.0.0"      
+    - id: private-subnets
       refs:
       - source: github.com/cloud-native-toolkit/terraform-aws-vpc-subnets
         version: ">= 1.0.0"
     variables:
-    - name: region
-      scope: global
     - name: rosa_token
-      scope: global
-    # - name: no_of_compute_nodes
-    #   scope: global
-    - name: machine-cidr
-      scope: global
-    - name: service-cidr 
-      scope: global
-    - name: pod-cidr 
-      scope: global
-    - name: host-prefix 
-      scope: global
+      scope: module
+      important: true
+    - name: no_of_compute_nodes
+      scope: module
+      important: true            
     - name: public_subnet_ids
-      scope: global
+      moduleRef:
+        id: public-subnets
+        output: subnet_ids
     - name: private_subnet_ids 
-      scope: global
-    - name: dry_run 
-      scope: global
-    # - name: provision
-    #   moduleRef:
-    #     id: aws-vpc
-    # - name: vpc_id
-    #   moduleRef:
-    #     id: aws-vpc
-    #     output: vpc_id
-    # - name: internal_cidr
-    #   moduleRef:
-    #     id: aws-vpc
-    # - name: private_subnet_cidr
-    #   moduleRef:
-    #     id: aws-vpc-subnets
-    # - name: public_subnet_cidr
-    #   moduleRef:
-    #     id: aws-vpc-subnets
-    # - name: availability_zones
-    #   moduleRef:
-    #     id: aws-vpc-subnets
-cloudProvider: aws
+      moduleRef:
+        id: private-subnets
+        output: subnet_ids
+      
+

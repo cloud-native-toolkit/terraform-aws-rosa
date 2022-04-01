@@ -1,4 +1,4 @@
-variable "prefix_name" {
+variable "name_prefix" {
   type        = string
   description = "Prefix to be added to the names of resources which are being provisioned"
   default     = "swe"
@@ -13,6 +13,7 @@ variable "region" {
 variable "rosa_token" {
   type        = string
   default     = ""
+  sensitive = true
   description = "get an offline access token at https://cloud.redhat.com/openshift/token/rosa "
 }
 
@@ -86,32 +87,32 @@ variable "subnet_ids" {
 variable "public_subnet_ids" {
   type        = list(string)
   description = "To create cluster in existing VPC, public and private Subnet ids should be given ."
-  default     = [""]
+  default     = []
 }
 
 variable "private_subnet_ids" {
   type        = list(string)
   description = "To create cluster in existing VPC, public and private Subnet ids should be given ."
-  default     = [""]
+  default     = []
 }
-/*     
+
 variable "multi-zone-cluster" {
-  type = string
-  default = ""
+  type = bool
+  default = false
   description = " Deploy to multiple data centers"
 }
 
 
 variable "private-link" {
-  type = string
-  default = ""
+  type = bool
+  default = false
   description = "Provides private connectivity between VPCs, AWS services, and your on-premises networks, without exposing your traffic to the public internet"
 }
 
-variable "subnet-ids" {
-  type = []
-  default = ""
-  description = "The Subnet IDs to use when installing the cluster. Format should be a comma-separated list. Leave empty for installer provisioned subnet IDs"
-}
-*/
+# variable "subnet-ids" {
+#   type = []
+#   default = ""
+#   description = "The Subnet IDs to use when installing the cluster. Format should be a comma-separated list. Leave empty for installer provisioned subnet IDs"
+# }
+
 

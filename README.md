@@ -44,7 +44,8 @@ provider "aws" {
 module "dev_aws_rosa" {
   source = "github.com/cloud-native-toolkit/terraform-aws-rosa/"
   region = var.region
-  rosa_token          = var.rosa_token
+  name_prefix         = var.name_prefix
+  rosa_token          = var.rosa_token #sensitive
   cluster_name        = var.cluster_name
   ocp_version         = var.ocp_version
   no_of_compute_nodes = var.no_of_compute_nodes
@@ -52,9 +53,12 @@ module "dev_aws_rosa" {
   service-cidr        = var.service-cidr
   pod-cidr            = var.pod-cidr
   host-prefix         = var.host-prefix
-  public_subnet_ids   = var.public_subnet_ids
-  private_subnet_ids  = var.private_subnet_ids
-  dry_run             = var.dry_run
+
+  public_subnet_ids  = module.dev_pub_subnet.subnet_ids
+  private_subnet_ids = module.dev_priv_subnet.subnet_ids
+  dry_run            = var.dry_run
+  multi-zone-cluster = var.multi-zone-cluster
+  private-link       = var.private-link
 }
 
 ```
