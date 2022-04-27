@@ -1,0 +1,64 @@
+name: Verify Workflow
+
+# Controls when the action will run.
+on:
+  workflow_call:
+    secrets:
+        TF_VAR_access_key:
+          required: true
+        TF_VAR_secret_key: 
+          required: true        
+        AWS_ACCESS_KEY_ID:
+          required: true        
+        AWS_SECRET_ACCESS_KEY:
+          required: true      
+        TF_VAR_rosa_token:
+          required: true              
+        # TF_VAR_enabled: 
+        #   required: true
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  verify:
+    if: ${{ !contains( github.event.pull_request.labels.*.name, 'skip ci' ) }}
+    runs-on: ubuntu-latest
+    container: quay.io/ibmgaragecloud/cli-tools:v0.15
+    strategy:
+      matrix:
+        testcase:
+          - aws_rosa
+      fail-fast: false
+    env:
+      HOME: /home/devops
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Verify deploy on ${{ matrix.testcase }}
+        uses: cloud-native-toolkit/action-module-verify-deploy@main
+        with:
+          clusterId: ${{ matrix.testcase }}
+          validateDeployScript: .github/scripts/validate-deploy.sh
+        env:
+          TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TF_VAR_rosa_token: ${{ secrets.AWS_ROSA_TOKEN }}                
+          #TF_VAR_enabled: ${{ matrix.enabled }}
+
+      - name: Verify destroy on ${{ matrix.testcase }}
+        uses: cloud-native-toolkit/action-module-verify-destroy@main
+        if: ${{ always() }}
+        with:
+          clusterId: ${{ matrix.testcase }}
+        env:
+          TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TF_VAR_rosa_token: ${{ secrets.AWS_ROSA_TOKEN }}                
+          #TF_VAR_enabled: ${{ matrix.enabled }}
+  
+  

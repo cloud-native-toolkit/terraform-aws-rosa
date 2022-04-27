@@ -1,5 +1,5 @@
 name: aws-rosa
-alias: rosa-cluster
+alias: cluster
 type: terraform
 description: Module to provision rosa on aws rosa cluster
 cloudProvider: aws

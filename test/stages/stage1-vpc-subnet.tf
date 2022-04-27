@@ -10,7 +10,7 @@ module "dev_pub_subnet" {
   subnet_cidrs       = var.pub_subnet_cidrs
   availability_zones = var.availability_zones
   gateways           = [module.dev_igw.igw_id]
-  acl_rules          = var.acl_rules_pub
+  #acl_rules          = var.acl_rules_pub
 }
 
 module "dev_ngw" {
@@ -37,9 +37,8 @@ module "dev_priv_subnet" {
   #availability_zones = ["ap-south-1a","ap-south-1b"]
   subnet_cidrs       = var.priv_subnet_cidrs
   availability_zones = var.availability_zones
-  acl_rules          = var.acl_rules_pri
+  #acl_rules          = var.acl_rules_pri
   gateways           = module.dev_ngw.ngw_id
-
 
 }
 

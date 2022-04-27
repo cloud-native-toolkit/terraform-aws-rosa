@@ -6,9 +6,10 @@ CLUSTER_NAME="$1"
 REGION="$2"
 export AWS_DEFAULT_REGION=${REGION}
 echo "Inputs CLUSTER_NAME  : ${CLUSTER_NAME} , REGION: ${REGION} "
-BIN_DIR=$(cat .bin_dir)
-cat .bin_dir
 
+# if [[ -n "${BIN_DIR}" ]]; then
+#   export PATH="${BIN_DIR}:${PATH}"
+# fi
 count=0
 ${BIN_DIR}/rosa  login 
 ${BIN_DIR}/rosa  init --region=${REGION}

@@ -6,10 +6,14 @@ CLUSTER_NAME="$1"
 REGION="$2"
 export AWS_DEFAULT_REGION=${REGION}
 echo "Inputs CLUSTER_NAME  : ${CLUSTER_NAME} , REGION: ${REGION} "
-BIN_DIR=$(cat .bin_dir)
-cat .bin_dir
 export ROSA_TOKEN="$3"
+# BIN_DIR=$(cat .bin_dir)
+# cat .bin_dir
 
+BIN_DIR="$4"
+# if [[ -n "${BIN_DIR}" ]]; then
+#   export PATH="${BIN_DIR}:${PATH}"
+# fi
 ${BIN_DIR}/rosa  login 
 ${BIN_DIR}/rosa  init --region=${REGION}
 
@@ -17,7 +21,7 @@ echo "Going to delete cluster - ${CLUSTER_NAME}  to be deleted "
 ${BIN_DIR}/rosa delete cluster --cluster=${CLUSTER_NAME} --region=${REGION} --yes
 echo "Waiting for cluster - ${CLUSTER_NAME} to be deleted "   
 
-sleep 1500
+sleep 1200
 
 echo "Cluster deletion done"
 count=0
