@@ -1,4 +1,4 @@
-cloutput "ocp_api_server_url" {
+output "ocp_api_server_url" {
   value = module.dev_aws_rosa.ocp_api_server_url
 
 }
