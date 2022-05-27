@@ -33,14 +33,6 @@ variable "name_prefix" {
   default     = "swe"
 }
 
-
-
-# variable "prefix_name" {
-#   type        = string
-#   description = "Prefix to be added to the names of resources which are being provisioned"
-#   default     = "swe"
-# }
-
 variable "provision" {
   type        = bool
   description = "Flag indicating that the instance should be provisioned. If false then an existing instance will be looked up"
@@ -139,7 +131,7 @@ variable "private_subnet_ids" {
 variable "dry_run" {
   type        = bool
   description = "Set to true to dry the command just to verify. Else set to false to actually run the cmd"
-  default     = true
+  default     = false
 }
 
 

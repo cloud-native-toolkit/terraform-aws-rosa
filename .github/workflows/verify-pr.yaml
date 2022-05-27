@@ -1,9 +1,9 @@
-name: Verify and release module
+name: Verify PR
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the main branch
 on:
-  push:
+  pull_request:
     branches: [ main ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -16,13 +16,7 @@ jobs:
       TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_ROSA_TOKEN: ${{ secrets.AWS_ROSA_TOKEN }}         
-      
+      AWS_ROSA_TOKEN: ${{ secrets.AWS_ROSA_TOKEN }} 
+  
   verifyMetadata:
     uses: cloud-native-toolkit/action-workflows/.github/workflows/verify-module-metadata.yaml@v1
-
-  release:
-    needs: [verify, verifyMetadata]
-    uses: cloud-native-toolkit/action-workflows/.github/workflows/release-module.yaml@v1
-    secrets:
-      TOKEN: ${{ secrets.TOKEN }}      
