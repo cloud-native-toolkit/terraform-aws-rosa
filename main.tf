@@ -1,7 +1,6 @@
 locals {
   cluster_name = var.cluster_name != "" && var.cluster_name != null ? var.cluster_name : "${var.name_prefix}-cluster"
   bin_dir        = module.setup_clis.bin_dir
-  
   compute_nodes = var.multi-zone-cluster ? (var.no_of_compute_nodes * 3) : var.no_of_compute_nodes
   #join_subnets = var.existing_vpc ? join(",", var.public_subnet_ids, var.private_subnet_ids): ""
   join_subnets = var.existing_vpc ? (var.private-link ?  join(",",  var.private_subnet_ids ): join(",", var.public_subnet_ids, var.private_subnet_ids)) :  ""
@@ -22,9 +21,9 @@ locals {
 }
 module "setup_clis" {
   source = "github.com/cloud-native-toolkit/terraform-util-clis.git"
+
   clis   = ["jq", "igc", "rosa", "oc"]
 }
-
 resource null_resource print_names {
   provisioner "local-exec" {
     when    = create
@@ -87,4 +86,5 @@ resource null_resource wait-for-cluster-ready {
       
     }
   }
+
 }

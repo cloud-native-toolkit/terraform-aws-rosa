@@ -34,6 +34,7 @@ module "dev_priv_subnet" {
   availability_zones = var.availability_zones
   #acl_rules          = var.acl_rules_pri
   gateways           = module.dev_ngw.ngw_id
+
 }
 
 
