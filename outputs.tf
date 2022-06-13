@@ -24,11 +24,8 @@ output "region" {
 }
 
 output "config_file_path" {
-  #value       = data.external.dirs.result.cluster_config_dir
-  #value = local.kube_config
   value =   data.external.oc_login.result.kube_config
-  #value       = module.ocp_login.config_file_path
-  
+
   description = "Path to the config file for the cluster."
   depends_on  = [
     data.external.getClusterAdmin,
@@ -48,11 +45,7 @@ output "server_url" {
 output "platform" {
   value = {
     id         = data.external.getClusterAdmin.result.clusterID
-    #kubeconfig = data.external.dirs.result.cluster_config_dir
-    #kubeconfig = module.ocp_login.config_file_path    
     kubeconfig=   data.external.oc_login.result.kube_config
-
-    
     server_url = data.external.getClusterAdmin.result.serverURL
     type       = local.cluster_type
     type_code  = local.cluster_type_code
@@ -67,7 +60,6 @@ output "platform" {
 
   ]
 }
-
 
 output "username" {
   description = "The username of the admin user for the cluster"

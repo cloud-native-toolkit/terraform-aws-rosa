@@ -58,7 +58,6 @@ variable "no_of_compute_nodes" {
   description = "Number of worker nodes to be provisioned"
 }
 
-
 variable "compute-machine-type" {
   type        = string
   default     = ""

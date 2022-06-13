@@ -115,10 +115,4 @@ variable "private-link" {
   description = "Provides private connectivity between VPCs, AWS services, and your on-premises networks, without exposing your traffic to the public internet"
 }
 
-# variable "subnet-ids" {
-#   type = []
-#   default = ""
-#   description = "The Subnet IDs to use when installing the cluster. Format should be a comma-separated list. Leave empty for installer provisioned subnet IDs"
-# }
-
 
