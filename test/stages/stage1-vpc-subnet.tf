@@ -1,6 +1,7 @@
 module "dev_pub_subnet" {
   source      = "github.com/cloud-native-toolkit/terraform-aws-vpc-subnets"
   provision   = var.provision
+  region = var.region
   name_prefix = var.name_prefix
 
   label    = "public"
@@ -16,7 +17,7 @@ module "dev_pub_subnet" {
 module "dev_ngw" {
 
   source              = "github.com/cloud-native-toolkit/terraform-aws-nat-gateway"
-  _count              = var.cloud_provider == "aws" ? var.gateways_count : 0
+  _count              = length(var.pub_subnet_cidrs) 
   provision           = var.provision
   resource_group_name = var.resource_group_name
   name_prefix         = var.name_prefix
@@ -27,10 +28,9 @@ module "dev_ngw" {
 
 module "dev_priv_subnet" {
   source = "github.com/cloud-native-toolkit/terraform-aws-vpc-subnets"
-
   provision   = var.provision
   name_prefix = var.name_prefix
-
+  region=var.region
   label    = "private"
   vpc_name = module.dev_vpc.vpc_name
   #subnet_cidrs = ["10.0.128.0/20","10.0.144.0/20"]
@@ -39,7 +39,6 @@ module "dev_priv_subnet" {
   availability_zones = var.availability_zones
   #acl_rules          = var.acl_rules_pri
   gateways           = module.dev_ngw.ngw_id
-
 }
 
 

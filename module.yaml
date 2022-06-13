@@ -1,5 +1,7 @@
 name: aws-rosa
 alias: cluster
+interfaces:
+- github.com/cloud-native-toolkit/automation-modules#cluster
 type: terraform
 description: Module to provision rosa on aws rosa cluster
 cloudProvider: aws
@@ -18,7 +20,8 @@ versions:
     - id: public-subnets
       refs:
       - source: github.com/cloud-native-toolkit/terraform-aws-vpc-subnets
-        version: ">= 1.0.0"      
+        version: ">= 1.0.0"  
+      optional: true      
     - id: private-subnets
       refs:
       - source: github.com/cloud-native-toolkit/terraform-aws-vpc-subnets
@@ -38,5 +41,10 @@ versions:
       moduleRef:
         id: private-subnets
         output: subnet_ids
-      
+    - name: machine-cidr 
+      moduleRef:
+        id:  aws-vpc
+        output: vpc_cidr
+
+        
 

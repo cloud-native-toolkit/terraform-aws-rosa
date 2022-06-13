@@ -10,6 +10,12 @@ variable "region" {
   description = "Please set the region where the resouces to be created"
 }
 
+variable "resource_group_name" {
+  type        = string
+  default     = ""
+  description = "Please set the default resource group with tags"
+}
+
 variable "rosa_token" {
   type        = string
   default     = ""
@@ -20,7 +26,7 @@ variable "rosa_token" {
 variable "dry_run" {
   type        = bool
   description = "Set to true to dry the command just to verify. Else set to false to actually run the cmd"
-  default     = true
+  default     = false
 }
 
 variable "existing_vpc" {
@@ -59,13 +65,13 @@ variable "machine-cidr" {
 }
 variable "service-cidr" {
   type        = string
-  default     = ""
+  default     = "172.30.0.0/16"
   description = "ipNet Block of IP addresses for services, for example 172.30.0.0/16 "
 }
 
 variable "pod-cidr" {
   type        = string
-  default     = ""
+  default     = "10.128.0.0/14"
   description = "ipNet Block of IP addresses from which Pod IP addresses are allocated, for example 10.128.0.0/14 "
 }
 variable "host-prefix" {

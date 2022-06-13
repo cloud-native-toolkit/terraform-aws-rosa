@@ -1,10 +1,107 @@
-output "ocp_api_server_url" {
-  #value      = local.ocp_api_server_url
-  #depends_on = [null_resource.create_rosa_user]
-  value = ""
+output "id" {
+  value       = data.external.getClusterAdmin.result.clusterID
+  description = "ID of the cluster."
+  depends_on  = [
+    data.external.getClusterAdmin
+  ]
 }
 
-output "ocp_cluster_name" {
+output "name" {
+  value       = local.cluster_name   
+  description = "Name of the cluster."
+}
+
+output "resource_group_name" {
+  value       = var.resource_group_name
+  description = "Name of the resource group containing the cluster."
   
-  value = local.cluster_name
+}
+
+output "region" {
+  value       = var.region
+  description = "Region containing the cluster."
+  
+}
+
+output "config_file_path" {
+  #value       = data.external.dirs.result.cluster_config_dir
+  #value = local.kube_config
+  value =   data.external.oc_login.result.kube_config
+  #value       = module.ocp_login.config_file_path
+  
+  description = "Path to the config file for the cluster."
+  depends_on  = [
+    data.external.getClusterAdmin,
+    data.external.oc_login
+  ]
+  
+}
+
+output "server_url" {
+  description = "The url used to connect to the api server. If the cluster has public endpoints enabled this will be the public api server, otherwise this will be the private api server url"
+  value = data.external.getClusterAdmin.result.serverURL
+  depends_on  = [
+    data.external.getClusterAdmin
+  ]
+}
+
+output "platform" {
+  value = {
+    id         = data.external.getClusterAdmin.result.clusterID
+    #kubeconfig = data.external.dirs.result.cluster_config_dir
+    #kubeconfig = module.ocp_login.config_file_path    
+    kubeconfig=   data.external.oc_login.result.kube_config
+
+    
+    server_url = data.external.getClusterAdmin.result.serverURL
+    type       = local.cluster_type
+    type_code  = local.cluster_type_code
+    version    = local.cluster_version
+    ingress    = data.external.getClusterAdmin.result.clusterDNS
+    tls_secret = ""
+  }
+  depends_on  = [
+    data.external.getClusterAdmin,
+    data.external.oc_login
+   
+
+  ]
+}
+
+
+output "username" {
+  description = "The username of the admin user for the cluster"
+  value = data.external.getClusterAdmin.result.adminUser
+  sensitive = true
+  depends_on  = [
+    data.external.getClusterAdmin
+  ]
+}
+
+output "password" {
+  description = "The password of the admin user for the cluster"
+  value = data.external.getClusterAdmin.result.adminPwd
+  sensitive = true
+  depends_on  = [
+    data.external.getClusterAdmin
+  ]
+}
+
+output "token" {
+  description = "The admin user token used to generate the cluster"
+  value = data.external.oc_login.result.token
+  sensitive = true
+  depends_on  = [
+    data.external.getClusterAdmin,
+    data.external.oc_login
+  ]
+}
+
+
+output "domainname" {
+  description = "The domain name  for the cluster"
+  value = data.external.getClusterAdmin.result.clusterDNS
+  depends_on  = [
+    data.external.getClusterAdmin
+  ]
 }
