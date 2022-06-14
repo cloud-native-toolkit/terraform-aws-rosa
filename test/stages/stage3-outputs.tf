@@ -1,7 +1,4 @@
-output "ocp_api_server_url" {
-  value = module.dev_aws_rosa.ocp_api_server_url
 
-}
 
 output "vpc_id" {
   depends_on = [
@@ -33,9 +30,62 @@ output "private_subnet_ids" {
 }
 
 
-output "ocp_cluster_name" {
+output "cluster_name" {
+  value = module.cluster.name
   depends_on = [
-    module.dev_aws_rosa
+    module.cluster
   ]
-  value = module.dev_aws_rosa.ocp_cluster_name
+}
+
+
+output "server_url" {
+  value = module.cluster.server_url
+  depends_on = [
+    module.cluster
+  ]
+}
+
+output "username" {
+  value = module.cluster.username
+  sensitive = true
+  depends_on = [
+    module.cluster
+  ]
+
+}
+
+output "password" {
+  value = module.cluster.password
+  sensitive = true
+  depends_on = [
+    module.cluster
+  ]
+}
+output "token" {
+  value = module.cluster.token
+  sensitive = true
+  depends_on = [
+    module.cluster
+  ]
+}
+
+output "config_file_path" {
+  value = module.cluster.config_file_path
+  depends_on = [
+    module.cluster
+  ]
+}
+
+
+output "platform" {
+  value = module.cluster.platform
+}
+
+
+output "domainname" {
+  description = "The domain name  for the cluster"
+  value = module.cluster.domainname
+  depends_on  = [
+    module.cluster
+  ]
 }

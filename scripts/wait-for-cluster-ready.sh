@@ -20,9 +20,15 @@ while true ; do
   else 
      
     if [[ ${cluster_status} ==  "ready" ]]; then
+      echo "Cluster ${CLUSTER_NAME} created and in  ready status"
       break;
     fi
+    if [[ ${cluster_status} ==  "error" ]]; then
+      echo "Cluster ${CLUSTER_NAME} creation in error state. Please review logs."
+      exit 1;
+    fi
   fi
+  
   count=$((count + 1)) 
   echo "Waiting for cluster - ${CLUSTER_NAME} status to be ready "
   sleep 300
