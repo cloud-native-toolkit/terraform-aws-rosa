@@ -2,12 +2,13 @@ locals {
   cluster_name = var.cluster_name != "" && var.cluster_name != null ? var.cluster_name : "${var.name_prefix}-cluster"
   bin_dir        = module.setup_clis.bin_dir
   compute_nodes = var.multi-zone-cluster ? (var.no_of_compute_nodes * 3) : var.no_of_compute_nodes
+  compute_type = var.compute-machine-type != "" &&  var.compute-machine-type != null ? var.compute-machine-type : "m5.xlarge"
   #join_subnets = var.existing_vpc ? join(",", var.public_subnet_ids, var.private_subnet_ids): ""
   join_subnets = var.existing_vpc ? (var.private-link ?  join(",",  var.private_subnet_ids ): join(",", var.public_subnet_ids, var.private_subnet_ids)) :  ""
   cmd_dry_run = var.dry_run ? " --dry-run" : ""
   multizone = var.multi-zone-cluster ? " --multi-az" : ""
   privatelink = var.private-link ? " --private-link" : ""
-  clsuter_cmd = " --cluster-name ${local.cluster_name} --region ${var.region} --version ${var.ocp_version} --compute-nodes ${local.compute_nodes} --machine-cidr ${var.machine-cidr} --service-cidr ${var.service-cidr} --pod-cidr ${var.pod-cidr} --host-prefix ${var.host-prefix} --etcd-encryption ${local.multizone} ${local.privatelink} ${local.cmd_dry_run} --yes"
+  clsuter_cmd = " --cluster-name ${local.cluster_name} --region ${var.region} --version ${var.ocp_version} --compute-nodes ${local.compute_nodes} --compute-machine-type ${local.compute_type} --machine-cidr ${var.machine-cidr} --service-cidr ${var.service-cidr} --pod-cidr ${var.pod-cidr} --host-prefix ${var.host-prefix} --etcd-encryption ${local.multizone} ${local.privatelink} ${local.cmd_dry_run} --yes"
   cluster_vpc_cmd = var.existing_vpc ? join(" ", [local.clsuter_cmd, " --subnet-ids ", local.join_subnets]) : ""
   create_clsuter_cmd = var.existing_vpc ? local.cluster_vpc_cmd : local.clsuter_cmd
 
