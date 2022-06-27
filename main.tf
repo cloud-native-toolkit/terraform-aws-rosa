@@ -3,7 +3,6 @@ locals {
   bin_dir        = module.setup_clis.bin_dir
   compute_nodes = var.multi-zone-cluster ? (var.no_of_compute_nodes * 3) : var.no_of_compute_nodes
   compute_type = var.compute-machine-type != "" &&  var.compute-machine-type != null ? var.compute-machine-type : "m5.xlarge"
-  #join_subnets = var.existing_vpc ? join(",", var.public_subnet_ids, var.private_subnet_ids): ""
   join_subnets = var.existing_vpc ? (var.private-link ?  join(",",  var.private_subnet_ids ): join(",", var.public_subnet_ids, var.private_subnet_ids)) :  ""
   cmd_dry_run = var.dry_run ? " --dry-run" : ""
   multizone = var.multi-zone-cluster ? " --multi-az" : ""

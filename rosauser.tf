@@ -1,16 +1,17 @@
 
 locals {
   tmp_dir = "${path.cwd}/.tmp"
-  kube_config    = "${local.tmp_dir}/cluster/.kube"  
-  cred_file_name = "rosa_admin_cred.json"
-  cluster_info_file_name="cluster_info.json"    
+  kube_config    = "${local.tmp_dir}/cluster/.kube7"  
+  cred_file_name = "rosa_admin_cred7.json"
+  cluster_info_file_name="cluster_info7.json"    
 }
 data external dirs {
   program = ["bash", "${path.module}/scripts/create-dirs.sh"]
 
   query = {
     tmp_dir = "${local.tmp_dir}"
-    kube_config = "${local.tmp_dir}/.kube"    
+    kube_config = "${local.kube_config}" 
+    #/kube_config"//"${local.tmp_dir}/.kube"    
   }
 }
 resource "null_resource" "create_rosa_user" {
@@ -22,7 +23,6 @@ resource "null_resource" "create_rosa_user" {
   ]
    
   triggers = {
-    #bin_dir      = local.bin_dir
     tmp_dir  = data.external.dirs.result.tmp_dir
     cred_file_name    = local.cred_file_name
     cluster_info_file_name=local.cluster_info_file_name
@@ -58,35 +58,49 @@ data external getClusterAdmin {
   }
 }
 
-data external oc_login {
-    depends_on = [
-        module.setup_clis,      
-        null_resource.create-rosa-cluster,
-        null_resource.wait-for-cluster-ready,
-        data.external.dirs,
-        null_resource.create_rosa_user,
-        data.external.getClusterAdmin
-    ]
-    program = ["bash", "${path.module}/scripts/oc-login.sh"]       
-    query ={
-        bin_dir=local.bin_dir
-        serverUrl = data.external.getClusterAdmin.result.serverURL
-        username = data.external.getClusterAdmin.result.adminUser
-        password = data.external.getClusterAdmin.result.adminPwd
-        clusterStatus=data.external.getClusterAdmin.result.clusterStatus        
-        tmp_dir = data.external.dirs.result.tmp_dir
-        kube_config = data.external.dirs.result.kube_config
+# data external oc_login {
+#     depends_on = [
+#         module.setup_clis,      
+#         null_resource.create-rosa-cluster,
+#         null_resource.wait-for-cluster-ready,
+#         data.external.dirs,
+#         null_resource.create_rosa_user,
+#         data.external.getClusterAdmin
+#     ]
+    
+#     program = ["bash", "${path.module}/scripts/oc-login.sh"]       
+#     query ={
+#         bin_dir=local.bin_dir
+#         serverUrl = data.external.getClusterAdmin.result.serverURL
+#         consoleUrl = data.external.getClusterAdmin.result.consoleUrl
+#         username = data.external.getClusterAdmin.result.adminUser
+#         password = data.external.getClusterAdmin.result.adminPwd
+#         clusterStatus=data.external.getClusterAdmin.result.clusterStatus        
+#         tmp_dir = data.external.dirs.result.tmp_dir
+#         kube_config = data.external.dirs.result.kube_config
+#         temp="test"
 
-    }    
- }
+#     }    
+#  }
  
- resource null_resource print_oc_login_status {
+#  resource null_resource print_oc_login_status {
   
-  depends_on = [
-    data.external.oc_login
-  ]
-  provisioner "local-exec" {
-    command = "echo 'oc login message : ${data.external.oc_login.result.status}, clusterStatus: ${data.external.getClusterAdmin.result.clusterStatus}, loginStatus: ${data.external.oc_login.result.message}'"
-  }
-} 
+#   depends_on = [
+#     data.external.oc_login
+#   ]
+#   provisioner "local-exec" {
+#     command = "echo 'oc login message : ${data.external.oc_login.result.status}, clusterStatus: ${data.external.getClusterAdmin.result.clusterStatus}, loginStatus: ${data.external.oc_login.result.message}'"
+#   }
+# } 
 
+module "oclogin" {
+  source = "github.com/cloud-native-toolkit/terraform-ocp-login.git"
+
+  server_url =data.external.getClusterAdmin.result.serverURL
+  login_user = data.external.getClusterAdmin.result.adminUser
+  login_password = data.external.getClusterAdmin.result.adminPwd
+  login_token =""
+  skip = false
+  #ingress_subdomain = var.ingress_subdomain
+  #ca_cert = var.cluster_ca_cert
+}

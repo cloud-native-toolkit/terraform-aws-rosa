@@ -33,6 +33,9 @@ versions:
     - name: no_of_compute_nodes
       scope: module
       important: true            
+    - name: compute-machine-type
+      scope: module
+      important: true            
     - name: public_subnet_ids
       moduleRef:
         id: public-subnets

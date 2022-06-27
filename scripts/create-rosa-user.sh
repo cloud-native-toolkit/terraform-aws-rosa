@@ -22,7 +22,7 @@ echo "cluster_status : ${CLUSTER_STATUS}"
 if [[ ${CLUSTER_STATUS} ==  "ready" ]]; then
     echo "Cluster ${CLUSTER_NAME} created and in  ready status"
     ${BIN_DIR}/rosa create admin --cluster ${CLUSTER_NAME} >> ${TMP_DIR}/${ROSA_USER_FILE}
-    sleep 300
+    sleep 60
 else 
     if [[ ${CLUSTER_STATUS} ==  "error" ]]; then
         echo "Cluster ${CLUSTER_NAME} is  in error status. Can not  create cluster admin user. Please check the cluster status/ config using rosa describe cluster --cluster=${CLUSTER_NAME} "
