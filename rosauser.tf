@@ -93,14 +93,14 @@ data external getClusterAdmin {
 #   }
 # } 
 
-module "oclogin" {
-  source = "github.com/cloud-native-toolkit/terraform-ocp-login.git"
+# module "oclogin" {
+#   source = "github.com/cloud-native-toolkit/terraform-ocp-login.git"
 
-  server_url =data.external.getClusterAdmin.result.serverURL
-  login_user = data.external.getClusterAdmin.result.adminUser
-  login_password = data.external.getClusterAdmin.result.adminPwd
-  login_token =""
-  skip = false
-  #ingress_subdomain = var.ingress_subdomain
-  #ca_cert = var.cluster_ca_cert
-}
+#   server_url =data.external.getClusterAdmin.result.serverURL
+#   login_user = data.external.getClusterAdmin.result.adminUser
+#   login_password = data.external.getClusterAdmin.result.adminPwd
+#   login_token =""
+#   skip = false
+#   #ingress_subdomain = var.ingress_subdomain
+#   #ca_cert = var.cluster_ca_cert
+# }
