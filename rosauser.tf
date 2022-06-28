@@ -58,40 +58,40 @@ data external getClusterAdmin {
   }
 }
 
-# data external oc_login {
-#     depends_on = [
-#         module.setup_clis,      
-#         null_resource.create-rosa-cluster,
-#         null_resource.wait-for-cluster-ready,
-#         data.external.dirs,
-#         null_resource.create_rosa_user,
-#         data.external.getClusterAdmin
-#     ]
+data external oc_login {
+    depends_on = [
+        module.setup_clis,      
+        null_resource.create-rosa-cluster,
+        null_resource.wait-for-cluster-ready,
+        data.external.dirs,
+        null_resource.create_rosa_user,
+        data.external.getClusterAdmin
+    ]
     
-#     program = ["bash", "${path.module}/scripts/oc-login.sh"]       
-#     query ={
-#         bin_dir=local.bin_dir
-#         serverUrl = data.external.getClusterAdmin.result.serverURL
-#         consoleUrl = data.external.getClusterAdmin.result.consoleUrl
-#         username = data.external.getClusterAdmin.result.adminUser
-#         password = data.external.getClusterAdmin.result.adminPwd
-#         clusterStatus=data.external.getClusterAdmin.result.clusterStatus        
-#         tmp_dir = data.external.dirs.result.tmp_dir
-#         kube_config = data.external.dirs.result.kube_config
-#         temp="test"
+    program = ["bash", "${path.module}/scripts/oc-login.sh"]       
+    query ={
+        bin_dir=local.bin_dir
+        serverUrl = data.external.getClusterAdmin.result.serverURL
+        consoleUrl = data.external.getClusterAdmin.result.consoleUrl
+        username = data.external.getClusterAdmin.result.adminUser
+        password = data.external.getClusterAdmin.result.adminPwd
+        clusterStatus=data.external.getClusterAdmin.result.clusterStatus        
+        tmp_dir = data.external.dirs.result.tmp_dir
+        kube_config = data.external.dirs.result.kube_config
+        temp="test"
 
-#     }    
-#  }
+    }    
+ }
  
-#  resource null_resource print_oc_login_status {
+ resource null_resource print_oc_login_status {
   
-#   depends_on = [
-#     data.external.oc_login
-#   ]
-#   provisioner "local-exec" {
-#     command = "echo 'oc login message : ${data.external.oc_login.result.status}, clusterStatus: ${data.external.getClusterAdmin.result.clusterStatus}, loginStatus: ${data.external.oc_login.result.message}'"
-#   }
-# } 
+  depends_on = [
+    data.external.oc_login
+  ]
+  provisioner "local-exec" {
+    command = "echo 'oc login message : ${data.external.oc_login.result.status}, clusterStatus: ${data.external.getClusterAdmin.result.clusterStatus}, loginStatus: ${data.external.oc_login.result.message}'"
+  }
+} 
 
 # module "oclogin" {
 #   source = "github.com/cloud-native-toolkit/terraform-ocp-login.git"

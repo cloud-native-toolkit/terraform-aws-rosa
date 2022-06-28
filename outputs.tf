@@ -43,8 +43,8 @@ output "console_url" {
 output "platform" {
   value = {
     id         = data.external.getClusterAdmin.result.clusterID
-    #kubeconfig=   data.external.oc_login.result.kube_config 
-    kubeconfig= "" #module.oclogin.config_file_path 
+    kubeconfig=   data.external.oc_login.result.kube_config 
+    
     server_url = data.external.getClusterAdmin.result.serverURL
     type       = local.cluster_type
     type_code  = local.cluster_type_code
@@ -54,7 +54,7 @@ output "platform" {
   }
   depends_on  = [
     data.external.getClusterAdmin,
-    #data.external.oc_login
+    data.external.oc_login
    
 
   ]
@@ -62,24 +62,24 @@ output "platform" {
 
 
 output "config_file_path" {
-  #value =  data.external.oc_login.result.kube_config 
-  value ="" #module.oclogin.config_file_path
+  value =  data.external.oc_login.result.kube_config 
+
 
   description = "Path to the config file for the cluster."
   depends_on  = [
     data.external.getClusterAdmin,
-   # data.external.oc_login
+    data.external.oc_login
   ]
   
 }
 output "token" {
   description = "The admin user token used to generate the cluster"
-  #value = data.external.oc_login.result.token 
-  value ="" #module.oclogin.config_file_path 
+  value = data.external.oc_login.result.token 
+  
   #sensitive = true
   depends_on  = [
     data.external.getClusterAdmin,
-   #data.external.oc_login
+   data.external.oc_login
   ]
 }
 
