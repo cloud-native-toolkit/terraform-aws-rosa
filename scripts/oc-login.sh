@@ -37,24 +37,43 @@ if [[ "${CLUSTER_STATUS}" == "error" ]]; then
   exit 1
 fi
 
-KUBE_CONFIG="${KUBE_CONFIG_DIR}/config"
+
+
+touch "${KUBE_CONFIG_DIR}/config"
+KUBE_CONFIG="${KUBE_CONFIG_DIR}/config"    
 export KUBECONFIG=${KUBE_CONFIG}
-#touch "${KUBE_CONFIG_DIR}/config"    
 
 if [[ "${CLUSTER_STATUS}" == "ready" ]]; then        
     if [[ -z "${USERNAME}" ]] && [[ -z "${PASSWORD}" ]] ; then
       echo "{\"status\": \"na\", \"message\": \"The username  ${USERNAME} and password ${PASSWORD}  must be provided to log into ocp\", \"kube_config\": \"\", \"token\":\"\"}"
       exit 0
     fi  
-    if ! oc login ${SERVER} --username ${USERNAME} --password ${PASSWORD} 1> /dev/null; then      
-        echo "{\"status\": \"error\", \"message\": \"Unable to login to ocp with given credentials\", \"kube_config\": \"\", \"serverUrl\":\"${SERVER}\", \"token\":\"\"}"
-        exit 0
-    else
-        TOKEN=$(cat ${KUBE_CONFIG}  | grep "token:" |  tail -1 |  awk  '{print $2}')
+  
+    count=0;
+    while count != 3 ; do
+        echo "{\"status\": \"checking\"}"
+      if ! oc login "${SERVER}" --username="${USERNAME}" --password="${PASSWORD}" 1> /dev/null; then               
+          echo "{\"status\": \"error\", \"message\": \"Unable to login to ocp with given credentials.......\", \"kube_config\": \"\", \"serverUrl\":\"${SERVER}\", \"token\":\"\"}"          
+      else
+          TOKEN=$(cat ${KUBE_CONFIG}  | grep "token:" |  tail -1 |  awk  '{print $2}')          
+          echo "{\"status\": \"success\", \"message\": \"success\", \"kube_config\": \"${KUBE_CONFIG}\", \"serverUrl\":\"${SERVER}\", \"token\":\"${TOKEN}\"}"
+          exit 0
+      fi
+        count=count+1; 
+        sleep 60;
+    done
+      echo "{\"status\": \"error\", \"message\": \"Unable to login to ocp with given credentials\", \"kube_config\": \"\", \"serverUrl\":\"${SERVER}\", \"token\":\"\"}"
+      exit 0
+
+    # if ! oc login ${SERVER} --username ${USERNAME} --password ${PASSWORD} 1> /dev/null; then      
+    #     echo "{\"status\": \"error\", \"message\": \"Unable to login to ocp with given credentials\", \"kube_config\": \"\", \"serverUrl\":\"${SERVER}\", \"token\":\"\"}"
+    #     exit 0
+    # else
+    #     TOKEN=$(cat ${KUBE_CONFIG}  | grep "token:" |  tail -1 |  awk  '{print $2}')
         
-        echo "{\"status\": \"success\", \"message\": \"success\", \"kube_config\": \"${KUBE_CONFIG}\", \"serverUrl\":\"${SERVER}\", \"token\":\"${TOKEN}\"}"
-        exit 0
-    fi
+    #     echo "{\"status\": \"success\", \"message\": \"success\", \"kube_config\": \"${KUBE_CONFIG}\", \"serverUrl\":\"${SERVER}\", \"token\":\"${TOKEN}\"}"
+    #     exit 0
+    # fi
 else
     echo "{\"status\": \"error\", \"message\":\"Error: Cluster is not ready to login. Please verify cluster config\", \"kube_config\": \"\", \"token\":\"\"}"
     exit 0

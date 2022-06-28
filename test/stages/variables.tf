@@ -60,7 +60,7 @@ variable "no_of_compute_nodes" {
 
 variable "compute-machine-type" {
   type        = string
-  default     = ""
+  default     = "m5.xlarge"
   description = "Instance type for the compute nodes. Determines the amount of memory and vCPU allocated to each compute node."
 }
 variable "machine-cidr" {
