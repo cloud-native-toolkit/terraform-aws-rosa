@@ -75,7 +75,6 @@ output "config_file_path" {
 output "token" {
   description = "The admin user token used to generate the cluster"
   value = data.external.oc_login.result.token 
-  
   #sensitive = true
   depends_on  = [
     data.external.getClusterAdmin,
