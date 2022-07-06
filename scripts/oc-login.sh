@@ -51,10 +51,12 @@ if [[ "${CLUSTER_STATUS}" == "ready" ]]; then
   
     count=0;
     
-    while  [[ $count -le 5 ]] ; do
+    while  [[ ${count} -le 8 ]] ; do
       echo "count  ${count}" > /tmp/oc-error.log 2>&1
       if ! oc login "${SERVER}" --username="${USERNAME}" --password="${PASSWORD}"  --insecure-skip-tls-verify 1> /dev/null; then               
-          echo "{\"status\": \"error\", \"message\": \"Unable to login to ocp with given credentials.......\",  \"username\":\"${USERNAME}\",  \"serverUrl\":\"${SERVER}\",\"kube_config\": \"\",\"token\":\"\"}"          
+        
+         echo "Unable to login ${count}" > /tmp/oc-error.log 2>&1
+         
       else
           # TOKEN=$(cat ${KUBE_CONFIG}  | grep "token:" |  tail -1 |  awk  '{print $2}')  
           #echo "Succsssfully logged in ${TOKEN}" > /tmp/oc-error.log 2>&1      
@@ -62,15 +64,16 @@ if [[ "${CLUSTER_STATUS}" == "ready" ]]; then
           exit 0
       fi
         ((count++))
-        #echo "Sleep for a min" > /tmp/oc-error.log 2>&1
-        sleep 60;
+         sleep 60;
+         echo "Sleep for a min" > /tmp/oc-error.log 2>&1       
+        
     done
-      #echo "Unable to login" > /tmp/oc-error.log 2>&1
-      echo "{\"status\": \"error\", \"message\": \"Unable to login to ocp with given credentials\",  \"serverUrl\":\"${SERVER}\", \"kube_config\": \"\", \"token\":\"\"}"
+      echo "Unable to login" > /tmp/oc-error.log 2>&1
+      echo "{\"status\": \"error\", \"message\": \"Unable to login to ocp with given credentials\", \"serverUrl\":\"${SERVER}\", \"kube_config\": \"\", \"token\":\"\"}"
       exit 0
 
 else
-    #echo "Cluster is not ready" > /tmp/oc-error.log 2>&1
+    echo "Cluster is not ready" > /tmp/oc-error.log 2>&1
     echo "{\"status\": \"error\", \"message\":\"Error: Cluster is not ready to login. Please verify cluster config\", \"serverUrl\":\"${SERVER}\", \"kube_config\": \"\", \"token\":\"\"}"
     exit 0
 fi  
