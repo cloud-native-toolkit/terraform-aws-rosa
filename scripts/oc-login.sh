@@ -41,6 +41,7 @@ fi
 touch "${KUBE_CONFIG_DIR}/config"
 KUBE_CONFIG="${KUBE_CONFIG_DIR}/config"    
 export KUBECONFIG=${KUBE_CONFIG}
+TOKEN=""
 
 if [[ "${CLUSTER_STATUS}" == "ready" ]]; then        
     if [[ -z "${USERNAME}" ]] && [[ -z "${PASSWORD}" ]] ; then
@@ -51,20 +52,25 @@ if [[ "${CLUSTER_STATUS}" == "ready" ]]; then
     count=0;
     
     while  [[ $count -le 5 ]] ; do
+      echo "count  ${count}" > /tmp/oc-error.log 2>&1
       if ! oc login "${SERVER}" --username="${USERNAME}" --password="${PASSWORD}"  --insecure-skip-tls-verify 1> /dev/null; then               
           echo "{\"status\": \"error\", \"message\": \"Unable to login to ocp with given credentials.......\",  \"username\":\"${USERNAME}\",  \"serverUrl\":\"${SERVER}\",\"kube_config\": \"\",\"token\":\"\"}"          
       else
-          TOKEN=$(cat ${KUBE_CONFIG}  | grep "token:" |  tail -1 |  awk  '{print $2}')          
-          echo "{\"status\": \"success\", \"message\": \"successfully logged in with username ${USERNAME}\", \"kube_config\": \"${KUBE_CONFIG}\", \"serverUrl\":\"${SERVER}\", \"token\":\"${TOKEN}\"}"
+          # TOKEN=$(cat ${KUBE_CONFIG}  | grep "token:" |  tail -1 |  awk  '{print $2}')  
+          #echo "Succsssfully logged in ${TOKEN}" > /tmp/oc-error.log 2>&1      
+          echo "{\"status\": \"success\", \"message\": \"successfully logged in with\", \"username\":\"${USERNAME}\", \"kube_config\": \"${KUBE_CONFIG}\", \"serverUrl\":\"${SERVER}\", \"token\": \"\"}"
           exit 0
       fi
         ((count++))
+        #echo "Sleep for a min" > /tmp/oc-error.log 2>&1
         sleep 60;
     done
+      #echo "Unable to login" > /tmp/oc-error.log 2>&1
       echo "{\"status\": \"error\", \"message\": \"Unable to login to ocp with given credentials\",  \"serverUrl\":\"${SERVER}\", \"kube_config\": \"\", \"token\":\"\"}"
       exit 0
 
 else
+    #echo "Cluster is not ready" > /tmp/oc-error.log 2>&1
     echo "{\"status\": \"error\", \"message\":\"Error: Cluster is not ready to login. Please verify cluster config\", \"serverUrl\":\"${SERVER}\", \"kube_config\": \"\", \"token\":\"\"}"
     exit 0
 fi  
