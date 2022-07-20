@@ -1,9 +1,9 @@
 
 locals {
   tmp_dir = "${path.cwd}/.tmp"
-  kube_config    = "${local.tmp_dir}/cluster/.kube7"  
-  cred_file_name = "rosa_admin_cred7.json"
-  cluster_info_file_name="cluster_info7.json"    
+  kube_config    = "${local.tmp_dir}/cluster/.kube"  
+  cred_file_name = "rosa_admin_cred.json"
+  cluster_info_file_name="cluster_info.json"    
 }
 data external dirs {
   program = ["bash", "${path.module}/scripts/create-dirs.sh"]
@@ -78,7 +78,6 @@ data external oc_login {
         clusterStatus=data.external.getClusterAdmin.result.clusterStatus        
         tmp_dir = data.external.dirs.result.tmp_dir
         kube_config = data.external.dirs.result.kube_config
-        temp="test"
 
     }    
  }

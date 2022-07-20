@@ -35,7 +35,10 @@ versions:
       important: true 
     - name: compute-machine-type
       scope: module
-      important: true                  
+      important: true     
+    - name: ocp_version 
+      scope: module     
+      important: true
     - name: public_subnet_ids
       moduleRef:
         id: public-subnets
