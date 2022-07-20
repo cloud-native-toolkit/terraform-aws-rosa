@@ -66,6 +66,182 @@ versions:
         type: string
         default: 4.9.15
         description: Version of OpenShift that will be used to install the cluster
+        scope: module
+        important: true
+      - name: no_of_compute_nodes
+        type: number
+        default: '2'
+        description: Number of worker nodes to be provisioned
+        scope: module
+        important: true
+      - name: compute-machine-type
+        type: string
+        default: m5.xlarge
+        description: >-
+          Instance type for the compute nodes. Determines the amount of memory
+          and vCPU allocated to each compute node. Default m5.xlarge
+        scope: module
+        important: true
+      - name: machine-cidr
+        type: string
+        default: ''
+        description: >-
+          ipNet Block of IP addresses used by OpenShift while installing the
+          cluster, for example 10.0.0.0/16 
+        moduleRef:
+          id: aws-vpc
+          output: vpc_cidr
+      - name: service-cidr
+        type: string
+        default: 172.30.0.0/16
+        description: 'ipNet Block of IP addresses for services, for example 172.30.0.0/16 '
+      - name: pod-cidr
+        type: string
+        default: 10.128.0.0/14
+        description: >-
+          ipNet Block of IP addresses from which Pod IP addresses are allocated,
+          for example 10.128.0.0/14 
+      - name: host-prefix
+        type: number
+        default: '23'
+        description: >-
+          Subnet prefix length to assign to each individual node. For example,
+          if host prefix is set to 23, then each node is assigned a /23 subnet
+          out of the given CIDR.
+      - name: etcd-encryption
+        type: string
+        default: ''
+        description: >-
+          Add etcd encryption. By default etcd data is encrypted at rest. This
+          option configures etcd encryption on top of existing storage
+          encryption.
+      - name: subnet_ids
+        type: list(string)
+        description: >-
+          To create cluster in existing VPC, public and private Subnet ids
+          should be given .
+        default:
+          - ''
+      - name: public_subnet_ids
+        type: list(string)
+        description: >-
+          To create cluster in existing VPC, public and private Subnet ids
+          should be given .
+        default: []
+        moduleRef:
+          id: public-subnets
+          output: subnet_ids
+      - name: private_subnet_ids
+        type: list(string)
+        description: >-
+          To create cluster in existing VPC, public and private Subnet ids
+          should be given .
+        default: []
+        moduleRef:
+          id: private-subnets
+          output: subnet_ids
+      - name: multi-zone-cluster
+        type: bool
+        default: false
+        description: ' Deploy to multiple data centers'
+      - name: private-link
+        type: bool
+        default: false
+        description: >-
+          Provides private connectivity between VPCs, AWS services, and your
+          on-premises networks, without exposing your traffic to the public
+          internet
+    version: v1.5.0
+    outputs:
+      - name: id
+        description: ID of the cluster.
+      - name: name
+        description: Name of the cluster.
+      - name: resource_group_name
+        description: Name of the resource group containing the cluster.
+      - name: region
+        description: Region containing the cluster.
+      - name: server_url
+        description: >-
+          The url used to connect to the api server. If the cluster has public
+          endpoints enabled this will be the public api server, otherwise this
+          will be the private api server url
+      - name: console_url
+        description: 'The url of the OCP console. '
+      - name: platform
+        type:
+          lines:
+            - local.cluster_type
+      - name: config_file_path
+        description: Path to the config file for the cluster.
+      - name: token
+        description: The admin user token used to generate the cluster
+      - name: username
+        description: The username of the admin user for the cluster
+      - name: password
+        description: The password of the admin user for the cluster
+      - name: domainname
+        description: The domain name  for the cluster
+  - platforms:
+      - ocp4
+    dependencies:
+      - id: aws-vpc
+        refs:
+          - source: github.com/cloud-native-toolkit/terraform-aws-vpc
+            version: '>= 1.0.0'
+      - id: public-subnets
+        refs:
+          - source: github.com/cloud-native-toolkit/terraform-aws-vpc-subnets
+            version: '>= 1.0.0'
+        optional: true
+      - id: private-subnets
+        refs:
+          - source: github.com/cloud-native-toolkit/terraform-aws-vpc-subnets
+            version: '>= 1.0.0'
+    variables:
+      - name: name_prefix
+        type: string
+        description: >-
+          Prefix to be added to the names of resources which are being
+          provisioned
+        default: swe
+      - name: region
+        type: string
+        default: ''
+        description: Please set the region where the resouces to be created
+      - name: resource_group_name
+        type: string
+        default: ''
+        description: Please set the default resource group with tags
+      - name: rosa_token
+        type: string
+        default: ''
+        sensitive: true
+        description: >-
+          get an offline access token at
+          https://cloud.redhat.com/openshift/token/rosa 
+        scope: module
+        important: true
+      - name: dry_run
+        type: bool
+        description: >-
+          Set to true to dry the command just to verify. Else set to false to
+          actually run the cmd
+        default: false
+      - name: existing_vpc
+        type: bool
+        default: true
+        description: >-
+          Flag to identify if VPC already exists. Default set to true. Used to
+          identify to pass the subnet ids to create the ROSA cluster
+      - name: cluster_name
+        type: string
+        default: ''
+        description: Name of the RedHat OpenShift Cluster
+      - name: ocp_version
+        type: string
+        default: 4.9.15
+        description: Version of OpenShift that will be used to install the cluster
       - name: no_of_compute_nodes
         type: number
         default: '2'
