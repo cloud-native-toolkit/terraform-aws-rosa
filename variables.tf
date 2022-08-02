@@ -116,3 +116,10 @@ variable "private-link" {
 }
 
 
+variable "secure-token-service" {
+  type = bool
+  default = false
+  description = "Use AWS Security Token Service (STS) instead of IAM credentials to deploy your cluster"
+}
+
+
