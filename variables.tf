@@ -53,6 +53,24 @@ variable "no_of_compute_nodes" {
   description = "Number of worker nodes to be provisioned"
 }
 
+variable "enable-autoscaling" {
+  type = bool
+  default = false
+  description = "Enable autoscaling of compute nodes."
+}
+
+variable "min-replicas" {
+  type        = number
+  default     = 2
+  description = "Minimum number of compute nodes."
+}
+
+variable "max-replicas" {
+  type        = number
+  default     = 2
+  description = "Maximum number of compute nodes."
+}
+
 variable "compute-machine-type" {
   type        = string
   default     = "m5.xlarge"
