@@ -116,3 +116,12 @@ variable "private-link" {
 }
 
 
+variable "private" {
+  type = bool
+  default = false
+  description = <<-EOF
+  Restrict master API endpoint and application routes to direct, private connectivity.
+  When using this option terraform has to be run from a host that has access to the
+  private subnets
+  EOF
+}
