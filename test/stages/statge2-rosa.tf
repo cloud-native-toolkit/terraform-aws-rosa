@@ -12,6 +12,7 @@ module "cluster" {
   private_subnet_ids = module.dev_priv_subnet.subnet_ids
   multi-zone-cluster = var.multi-zone-cluster
   private-link       = var.private-link
+  secure-token-service = var.secure-token-service
   # service-cidr        = var.service-cidr
   # pod-cidr            = var.pod-cidr
   # host-prefix         = var.host-prefix

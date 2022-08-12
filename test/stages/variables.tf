@@ -109,6 +109,12 @@ variable "private-link" {
   description = "Provides private connectivity between VPCs, AWS services, and your on-premises networks, without exposing your traffic to the public internet"
 }
 
+variable "secure-token-service" {
+  type = bool
+  default = false
+  description = "Use AWS Security Token Service (STS) instead of IAM credentials to deploy your cluster"
+}
+
 variable "existing_vpc" {
   type        = bool
   default     = true
