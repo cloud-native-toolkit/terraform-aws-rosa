@@ -7,7 +7,7 @@ locals {
   cmd_dry_run = var.dry_run ? " --dry-run" : ""
   multizone = var.multi-zone-cluster ? " --multi-az" : ""
   resource_group_name = var.resource_group_name == "" ? var.region : var.resource_group_name
-  tags = "ResourceGroup:${var.resource_group_name}"
+  tags = "ResourceGroup:${local.resource_group_name}"
   privatelink = var.private-link ? " --private-link" : ""
   clsuter_cmd = " --cluster-name ${local.cluster_name} --region ${var.region} --version ${var.ocp_version} --compute-nodes ${local.compute_nodes} --compute-machine-type ${local.compute_type} --machine-cidr ${var.machine-cidr} --service-cidr ${var.service-cidr} --pod-cidr ${var.pod-cidr} --host-prefix ${var.host-prefix} --etcd-encryption ${local.multizone}  --tags=${local.tags} ${local.privatelink} ${local.cmd_dry_run} --yes"
   cluster_vpc_cmd = var.existing_vpc ? join(" ", [local.clsuter_cmd, " --subnet-ids ", local.join_subnets]) : ""
