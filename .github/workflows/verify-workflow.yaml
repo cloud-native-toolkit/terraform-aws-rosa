@@ -20,7 +20,7 @@ jobs:
   verify:
     if: ${{ !contains( github.event.pull_request.labels.*.name, 'skip ci' ) }}
     runs-on: ubuntu-latest
-    container: quay.io/ibmgaragecloud/cli-tools:v0.15
+    container: quay.io/cloudnativetoolkit/cli-tools-aws:v1.2-v0.3.11
     strategy:
       matrix:
         testcase:
