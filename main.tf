@@ -34,29 +34,51 @@ resource null_resource print_names {
   }
 }
 
-resource "null_resource" "create-rosa-cluster" {
+resource "null_resource" "rosa-cluster" {
   triggers = {
     bin_dir            = local.bin_dir
-    create_clsuter_cmd = local.create_clsuter_cmd
     cluster_name       = local.cluster_name
-    rosa_token        = var.rosa_token
-    region          = var.region
+    rosa_token         = var.rosa_token
+    region             = var.region
+    ocp_version        = var.ocp_version
+    machine_cidr       = var.machine-cidr
+    service_cidr       = var.service-cidr
+    pod_cidr           = var.pod-cidr
+    host_prefix        = var.host-prefix
+    multizone          = local.multizone
+    privatelink        = local.privatelink
+    dry_run            = local.cmd_dry_run
   }
   depends_on = [
     module.setup_clis,
     null_resource.print_names
   ]
 
-
   provisioner "local-exec" {
     when    = create
-    command = <<-EOF
-    ${self.triggers.bin_dir}/rosa login --token=${var.rosa_token}
-    ${self.triggers.bin_dir}/rosa verify quota --region=${self.triggers.region}
-    ${self.triggers.bin_dir}/rosa init --region=${self.triggers.region}
-    ${self.triggers.bin_dir}/rosa create cluster ${self.triggers.create_clsuter_cmd}
-    EOF
+    command = "${path.module}/scripts/create-rosa.sh"
+
+    environment = {
+      ROSA_TOKEN    = self.triggers.rosa_token
+      REGION        = self.triggers.region
+      CLUSTER_NAME  = self.triggers.cluster_name
+      VERSION       = self.triggers.ocp_version
+      COMPUTE_NODES = local.compute_nodes
+      COMPUTE_TYPE  = local.compute_type
+      MACHINE_CIDR  = self.triggers.machine_cidr
+      DRY_RUN       = var.dry_run
+      SERVICE_CIDR  = self.triggers.service_cidr
+      POD_CIDR      = self.triggers.pod_cidr
+      HOST_PREFIX   = self.triggers.host_prefix
+      MULTIZONE     = self.triggers.multizone
+      PRIVATELINK   = self.triggers.privatelink
+      DRY_RUN       = self.triggers.dry_run
+      TAGS          = local.tags
+      BIN_DIR       = self.triggers.bin_dir
+     }
+    
   }
+
 
  provisioner "local-exec" {
     when    = destroy
@@ -70,7 +92,7 @@ resource "null_resource" "create-rosa-cluster" {
 }
 
 resource null_resource wait-for-cluster-ready {
- depends_on = [null_resource.create-rosa-cluster]
+ depends_on = [null_resource.rosa-cluster]
   
    triggers = {
     bin_dir            = local.bin_dir
@@ -83,8 +105,7 @@ resource null_resource wait-for-cluster-ready {
 
     environment = {
       BIN_DIR=module.setup_clis.bin_dir
-      ROSA_TOKEN=nonsensitive(var.rosa_token)
-      
+      ROSA_TOKEN=nonsensitive(var.rosa_token)      
     }
   }
 

@@ -17,7 +17,7 @@ data external dirs {
 resource "null_resource" "create_rosa_user" {
   depends_on = [
     module.setup_clis,    
-    null_resource.create-rosa-cluster,
+    null_resource.rosa-cluster,
     null_resource.wait-for-cluster-ready,
     data.external.dirs
   ]
@@ -44,7 +44,7 @@ resource "null_resource" "create_rosa_user" {
 data external getClusterAdmin {
     depends_on = [
     module.setup_clis,      
-    null_resource.create-rosa-cluster,
+    null_resource.rosa-cluster,
     null_resource.wait-for-cluster-ready,
     null_resource.create_rosa_user,
     data.external.dirs
@@ -61,7 +61,7 @@ data external getClusterAdmin {
 data external oc_login {
     depends_on = [
         module.setup_clis,      
-        null_resource.create-rosa-cluster,
+        null_resource.rosa-cluster,
         null_resource.wait-for-cluster-ready,
         data.external.dirs,
         null_resource.create_rosa_user,
