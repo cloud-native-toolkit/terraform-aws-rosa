@@ -14,6 +14,11 @@ if [[ -n "${TAGS}" ]]; then
   TAGS_ARG="--tags=${TAGS}"
 fi
 
+# Specify existing subnets for existing VPC
+if [[ -n "${SUBNETS}" ]]; then
+  SUBNET_ARGS="--subnet-ids ${SUBNETS}"
+fi
+
 
 # Kick off cluster creation
 $BIN_DIR/rosa create cluster \
@@ -27,4 +32,4 @@ $BIN_DIR/rosa create cluster \
   --pod-cidr ${POD_CIDR} \
   --host-prefix ${HOST_PREFIX} \
   --etcd-encryption ${MULTIZONE}  \
-  ${TAGS_ARG} ${PRIVATELINK} ${DRY_RUN} --yes
+  ${SUBNET_ARG} ${TAGS_ARG} ${PRIVATELINK} ${DRY_RUN} --yes

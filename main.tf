@@ -6,6 +6,7 @@ locals {
   join_subnets = var.existing_vpc ? (var.private-link ?  join(",",  var.private_subnet_ids ): join(",", var.public_subnet_ids, var.private_subnet_ids)) :  ""
   cmd_dry_run = var.dry_run ? " --dry-run" : ""
   multizone = var.multi-zone-cluster ? " --multi-az" : ""
+  resource_group_name = var.resource_group_name == "" ? var.region : var.resource_group_name
   tags = "ResourceGroup:${var.resource_group_name}"
   privatelink = var.private-link ? " --private-link" : ""
   clsuter_cmd = " --cluster-name ${local.cluster_name} --region ${var.region} --version ${var.ocp_version} --compute-nodes ${local.compute_nodes} --compute-machine-type ${local.compute_type} --machine-cidr ${var.machine-cidr} --service-cidr ${var.service-cidr} --pod-cidr ${var.pod-cidr} --host-prefix ${var.host-prefix} --etcd-encryption ${local.multizone}  --tags=${local.tags} ${local.privatelink} ${local.cmd_dry_run} --yes"
@@ -48,6 +49,7 @@ resource "null_resource" "rosa-cluster" {
     multizone          = local.multizone
     privatelink        = local.privatelink
     dry_run            = local.cmd_dry_run
+    existing_subnets   = local.join_subnets
   }
   depends_on = [
     module.setup_clis,
@@ -75,6 +77,7 @@ resource "null_resource" "rosa-cluster" {
       DRY_RUN       = self.triggers.dry_run
       TAGS          = local.tags
       BIN_DIR       = self.triggers.bin_dir
+      SUBNETS       = self.triggers.existing_subnets
      }
     
   }
