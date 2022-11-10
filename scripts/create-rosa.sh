@@ -24,7 +24,7 @@ $BIN_DIR/rosa create cluster \
   --cluster-name ${CLUSTER_NAME} \
   --region ${REGION} \
   --version ${VERSION} \
-  --compute-nodes ${COMPUTE_NODES} \
+  --replicas ${COMPUTE_NODES} \
   --compute-machine-type ${COMPUTE_TYPE} \
   --machine-cidr ${MACHINE_CIDR} \
   --service-cidr ${SERVICE_CIDR} \
