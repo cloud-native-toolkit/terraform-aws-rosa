@@ -115,4 +115,9 @@ variable "private-link" {
   description = "Provides private connectivity between VPCs, AWS services, and your on-premises networks, without exposing your traffic to the public internet"
 }
 
+variable "tags" {
+  type = map(string)
+  default = {}
+}
+
 
