@@ -19,7 +19,6 @@ if [[ -n "${SUBNETS}" ]]; then
   SUBNET_ARGS="--subnet-ids ${SUBNETS}"
 fi
 
-
 # Kick off cluster creation
 $BIN_DIR/rosa create cluster \
   --cluster-name ${CLUSTER_NAME} \
