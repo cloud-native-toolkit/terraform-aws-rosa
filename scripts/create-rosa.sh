@@ -31,4 +31,4 @@ $BIN_DIR/rosa create cluster \
   --pod-cidr ${POD_CIDR} \
   --host-prefix ${HOST_PREFIX} \
   --etcd-encryption ${MULTIZONE}  \
-  ${SUBNET_ARG} ${TAGS_ARG} ${PRIVATELINK} ${DRY_RUN} --yes
+  ${SUBNET_ARGS} ${TAGS_ARG} ${PRIVATELINK} ${DRY_RUN} --yes
