@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+export AWS_DEFAULT_REGION=${REGION}
+export AWS_ACCESS_KEY_ID=${TF_VAR_access_key}
+export AWS_SECRET_ACCESS_KEY=${TF_VAR_secret_key}
+
+
 # Login to the rosa CLI
 $BIN_DIR/rosa login --token=${ROSA_TOKEN}
 
