@@ -5,6 +5,10 @@ SCRIPT_DIR=$(cd $(dirname "$0"); pwd -P)
 CLUSTER_NAME="$1"
 REGION="$2"
 export AWS_DEFAULT_REGION=${REGION}
+export AWS_ACCESS_KEY_ID=${TF_VAR_access_key}
+export AWS_SECRET_ACCESS_KEY=${TF_VAR_secret_key}
+
+
 echo "Inputs CLUSTER_NAME  : ${CLUSTER_NAME} , REGION: ${REGION} "
 
 count=0
