@@ -8,12 +8,8 @@ on:
           required: true
         TF_VAR_secret_key: 
           required: true        
-        AWS_ACCESS_KEY_ID:
+        TF_VAR_rosa_token:
           required: true        
-        AWS_SECRET_ACCESS_KEY:
-          required: true   
-        AWS_ROSA_TOKEN:
-          required: true    
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
